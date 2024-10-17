@@ -17,19 +17,15 @@ pip install =r requirements.txt
 python manage.py runserver
 
 
-# Step 5: Start server
-python manage.py runserver
-
-
-# Step 7: Create a new branch or Navigate to existing branch
+# Step 5: Create a new branch or Navigate to existing branch
 git checkout -b 'new_branch_name' || git checkout 'branch_name'
 
 
-# Step 8: Add and commit your changes
+# Step 6: Add and commit your changes
 git add .
 git commit -m "your commit message"
 
-# Step 9: Push the changes to the remote repository
+# Step 7: Push the changes to the remote repository
 git push -u origin 'new_branch_name'
 
 # To switch branches
