@@ -1,11 +1,4 @@
-from django.http import HttpResponse
-from .models import Article
+from django.shortcuts import render
 
 def index(request):
-    # Fetch all articles
-    articles = Article.objects.all()
-
-    # Prepare plain-text response
-    response = "\n".join([f"Title: {article.title}, About: {article.about}, Category ID: {article.category_id}" for article in articles])
-
-    return HttpResponse(response, content_type="text/plain")
+    return render(request, 'knowl/base.html')
