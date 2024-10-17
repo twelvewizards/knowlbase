@@ -1,0 +1,88 @@
+/* Filter section container */
+.filter-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+/* Category filters container */
+.category-filters {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    transform: scale(0.9);
+}
+
+/* Filter option common styles */
+.filter-option {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-right: 1px solid #1a1a1a;
+    font-family: 'Public Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Remove border for the last filter */
+.filter-option:last-child {
+    border-right: none;
+}
+
+/* Specific styles for each category */
+.filter-option.art {
+    background-color: #4aa4d8;
+    color: white;
+}
+
+.filter-option.mathematics {
+    background-color: #e25b74;
+    color: white;
+}
+
+.filter-option.technology {
+    background-color: #57cc5b;
+    color: white;
+}
+
+/* Radio button styling */
+.filter-option input[type="radio"] {
+    margin-right: 6px;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background-color: transparent;
+    position: relative;
+}
+
+.filter-option input[type="radio"]:checked {
+    background-color: white;
+}
+
+/* Filter button */
+.filter-btn {
+    display: flex;
+    align-items: center;
+    background-color: #888888;
+    color: white;
+    font-weight: 600;
+    padding: 6px 12px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transform: scale(0.9);
+}
+
+.filter-btn img {
+    margin-right: 6px;
+    width: 20px;
+    height: 20px;
+}

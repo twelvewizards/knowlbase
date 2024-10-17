@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Navbar-specific styles -->
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <!-- Article contents-specific styles -->
+    <link rel="stylesheet" href="{% static 'css/article-contents.css' %}">
+    <!-- Filter-specific styles -->
+    <link rel="stylesheet" href="{% static 'css/filter.css' %}">
 </head>
 <body>
     <nav class="navbar">
@@ -26,6 +30,38 @@
         </div>
     </nav>
     
+    <!-- Article content section: Default state -->
+    <div class="article-content-default">
+        <p>Click an article to view its contents</p>
+    </div>
+
+    <!-- Dropdown arrow and rectangle container -->
+    <div class="dropdown-container">
+        <div class="dropdown-rectangle"></div>
+        <div class="dropdown-arrow"></div>
+    </div>
+
+    <!-- Filter section -->
+<div class="filter-section">
+    <div class="category-filters">
+        <label class="filter-option art">
+            <input type="radio" name="category" />
+            <span>Art</span>
+        </label>
+        <label class="filter-option mathematics">
+            <input type="radio" name="category" />
+            <span>Mathematics</span>
+        </label>
+        <label class="filter-option technology">
+            <input type="radio" name="category" />
+            <span>Technology</span>
+        </label>
+    </div>
+    <button class="filter-btn">
+        <img src="https://img.icons8.com/ios-filled/24/ffffff/filter.png" alt="Filter" />
+        Filter
+    </button>
+</div>
 
     <div class="content">
         {% block content %}{% endblock %}
