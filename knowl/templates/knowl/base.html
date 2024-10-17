@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{% static 'css/article-contents.css' %}">
     <!-- Filter-specific styles -->
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
+    <!-- Search-specific styles -->
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
 </head>
 <body>
     <nav class="navbar">
@@ -41,27 +43,37 @@
         <div class="dropdown-arrow"></div>
     </div>
 
-    <!-- Filter section -->
-<div class="filter-section">
-    <div class="category-filters">
-        <label class="filter-option art">
-            <input type="radio" name="category" />
-            <span>Art</span>
-        </label>
-        <label class="filter-option mathematics">
-            <input type="radio" name="category" />
-            <span>Mathematics</span>
-        </label>
-        <label class="filter-option technology">
-            <input type="radio" name="category" />
-            <span>Technology</span>
-        </label>
+    <!-- Filter and Search section -->
+    <div class="filter-section">
+        <div class="filter-components">
+            <div class="category-filters">
+                <label class="filter-option art">
+                    <input type="radio" name="category" />
+                    <span>Art</span>
+                </label>
+                <label class="filter-option mathematics">
+                    <input type="radio" name="category" />
+                    <span>Mathematics</span>
+                </label>
+                <label class="filter-option technology">
+                    <input type="radio" name="category" />
+                    <span>Technology</span>
+                </label>
+            </div>
+            <button class="filter-btn">
+                <img src="https://img.icons8.com/ios-filled/24/ffffff/filter.png" alt="Filter" />
+                Filter
+            </button>
+        </div>
+        
+        <!-- Search bar section -->
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search...">
+            <button class="search-btn">
+                <img src="https://img.icons8.com/ios-filled/24/000000/search.png" alt="Search Icon">
+            </button>
+        </div>
     </div>
-    <button class="filter-btn">
-        <img src="https://img.icons8.com/ios-filled/24/ffffff/filter.png" alt="Filter" />
-        Filter
-    </button>
-</div>
 
     <div class="content">
         {% block content %}{% endblock %}

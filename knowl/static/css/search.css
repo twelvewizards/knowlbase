@@ -1,0 +1,40 @@
+/* Search bar container */
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Align to the right */
+    height: 34px; /* Increased to match new filter button height */
+}
+
+/* Style for the search input field */
+.search-bar {
+    width: 350px; /* Increased from 300px */
+    padding: 6px 14px; /* Adjusted to match filter height */
+    border: 1px solid #ccc;
+    border-radius: 8px 0 0 8px; /* Slightly reduced border radius */
+    font-size: 14px; /* Increased to match filter text */
+    outline: none;
+    font-family: 'Public Sans', sans-serif;
+    height: 100%; /* Fill the container height */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* Style for the search button */
+.search-btn {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 8px 8px 0; /* Slightly reduced border radius */
+    padding: 6px 14px; /* Adjusted to match filter height */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Fill the container height */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.search-btn img {
+    width: 18px; /* Slightly increased */
+    height: 18px; /* Slightly increased */
+}
