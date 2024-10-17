@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Navbar-specific styles -->
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <!-- Article contents-specific styles -->
+    <link rel="stylesheet" href="{% static 'css/article-contents.css' %}">
 </head>
 <body>
     <nav class="navbar">
@@ -26,6 +28,16 @@
         </div>
     </nav>
     
+    <!-- Article content section: Default state -->
+    <div class="article-content-default">
+        <p>Click an article to view its contents</p>
+    </div>
+
+    <!-- Dropdown arrow and rectangle container -->
+    <div class="dropdown-container">
+        <div class="dropdown-rectangle"></div>
+        <div class="dropdown-arrow"></div>
+    </div>
 
     <div class="content">
         {% block content %}{% endblock %}
