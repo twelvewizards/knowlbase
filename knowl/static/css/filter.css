@@ -2,9 +2,16 @@
 .filter-section {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     margin-top: 20px;
     margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* Filter components container */
+.filter-components {
+    display: flex;
+    align-items: center;
 }
 
 /* Category filters container */
@@ -13,14 +20,14 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
-    transform: scale(0.9);
+    transform: scale(0.98);
 }
 
 /* Filter option common styles */
 .filter-option {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-right: 1px solid #1a1a1a;
     font-family: 'Public Sans', sans-serif;
     font-weight: 600;
@@ -72,13 +79,14 @@
     background-color: #888888;
     color: white;
     font-weight: 600;
-    padding: 6px 12px;
-    margin-left: 8px;
+    padding: 6px 14px;
+    margin-left: 10px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    transform: scale(0.9);
+    height: 100%;
+    transform: scale(0.98);
 }
 
 .filter-btn img {
