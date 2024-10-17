@@ -1,0 +1,87 @@
+/* Navbar-specific styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 15px 30px;
+}
+
+/* Move KnowlBase logo and Home link to the right by adding left padding */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    padding-left: 50px; /* Adjust this value as needed */
+}
+
+/* Adjust the vertical alignment for Log in / Sign up buttons */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    padding-top: 2px;  /* Adjust this value to move the buttons up */
+}
+
+/* Black weight for Know4Base logo */
+.logo {
+    font-size: 22px; /* Slightly smaller font size */
+    font-weight: 900;  /* Black weight */
+    color: white;
+    margin-right: 20px;
+}
+
+/* Semibold weight for Home link with smaller text */
+.nav-link {
+    font-size: 14px;  /* Smaller font size */
+    font-weight: 600;  /* Semibold */
+    color: white;
+    margin-right: 20px;
+    margin-left: 30px; /* Add left margin to move Home further right */
+    transition: color 0.3s ease;  /* Only apply hover effect to text color */
+}
+
+/* Hover effect for Home link - only color change */
+.nav-link:hover {
+    color: rgba(255, 255, 255, 0.7);  /* Make text slightly dimmer on hover */
+}
+
+/* Semibold weight for Log in / Sign up buttons with smaller text */
+.login-btn, .signup-btn {
+    font-size: 14px;  /* Smaller font size */
+    font-weight: 600;  /* Semibold */
+    margin-left: 20px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effects for buttons - background color change */
+.login-btn:hover, .signup-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly darker on hover */
+}
+
+/* Style for the Log in button */
+.login-btn {
+    color: white;
+    border: 1px solid white;
+    background-color: transparent;
+}
+
+/* Style for the Sign up button */
+.signup-btn {
+    color: black;
+    background-color: white;
+    border: 1px solid white;
+}
+
+/* Settings icon style */
+.settings-icon img {
+    width: 24px;
+    height: 24px;
+    margin-left: 20px;
+    transition: filter 0.3s ease; /* Add smooth transition for hover effect */
+}
+
+/* Hover effect for Settings icon - make it darker */
+.settings-icon:hover img {
+    filter: brightness(0.8); /* Make the icon slightly darker on hover */
+}
