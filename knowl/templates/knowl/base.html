@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
     <!-- Search-specific styles -->
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
+    <!-- Article buttons-specific styles -->
+    <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
 </head>
 <body>
     <nav class="navbar">
@@ -31,7 +33,7 @@
             </a>
         </div>
     </nav>
-    
+
     <!-- Article content section: Default state -->
     <div class="article-content-default">
         <p>Click an article to view its contents</p>
@@ -48,15 +50,15 @@
         <div class="filter-components">
             <div class="category-filters">
                 <label class="filter-option art">
-                    <input type="radio" name="category" />
+                    <input type="radio" name="category-art" checked />
                     <span>Art</span>
                 </label>
                 <label class="filter-option mathematics">
-                    <input type="radio" name="category" />
+                    <input type="radio" name="category-math" checked />
                     <span>Mathematics</span>
                 </label>
                 <label class="filter-option technology">
-                    <input type="radio" name="category" />
+                    <input type="radio" name="category-tech" checked />
                     <span>Technology</span>
                 </label>
             </div>
@@ -65,7 +67,7 @@
                 Filter
             </button>
         </div>
-        
+
         <!-- Search bar section -->
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="Search...">
@@ -75,8 +77,79 @@
         </div>
     </div>
 
+    <div class="article-buttons-container">
+        <button class="article-button mathematics">Article One</button>
+        <button class="article-button art">Article Two</button>
+        <button class="article-button technology">Article Three</button>
+        <button class="article-button mathematics">Article Four</button>
+        <button class="article-button art">Article Five</button>
+        <button class="article-button technology">Article Six</button>
+        <button class="article-button mathematics">Article Seven</button>
+        <button class="article-button art">Article Eight</button>
+        <button class="article-button technology">Article Nine</button>
+        <button class="article-button mathematics">Article Ten</button>
+        <button class="article-button art">Article Eleven</button>
+        <button class="article-button technology">Article Twelve</button>
+        <button class="article-button mathematics">Article Thirteen</button>
+        <button class="article-button art">Article Fourteen</button>
+        <button class="article-button add-new">+ Add New</button>
+    </div>
+
     <div class="content">
         {% block content %}{% endblock %}
     </div>
+
+    <script>
+        // Filter toggle functionality
+        document.querySelectorAll('.filter-option').forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            let wasChecked = true;
+            
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Count how many filters are currently checked
+                const checkedFilters = document.querySelectorAll('.filter-option input[type="radio"]:checked').length;
+                
+                // Only allow unchecking if it's not the last checked filter
+                if (radio.checked && wasChecked && checkedFilters > 1) {
+                    radio.checked = false;
+                    wasChecked = false;
+                } else if (!radio.checked) {
+                    radio.checked = true;
+                    wasChecked = true;
+                }
+                
+                // Update article visibility whenever a filter changes
+                updateArticleVisibility();
+            });
+
+            radio.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+
+        // Function to update article visibility
+        function updateArticleVisibility() {
+            const artChecked = document.querySelector('.filter-option.art input[type="radio"]').checked;
+            const mathChecked = document.querySelector('.filter-option.mathematics input[type="radio"]').checked;
+            const techChecked = document.querySelector('.filter-option.technology input[type="radio"]').checked;
+
+            document.querySelectorAll('.article-button').forEach(button => {
+                if (button.classList.contains('art')) {
+                    button.style.display = artChecked ? 'flex' : 'none';
+                }
+                if (button.classList.contains('mathematics')) {
+                    button.style.display = mathChecked ? 'flex' : 'none';
+                }
+                if (button.classList.contains('technology')) {
+                    button.style.display = techChecked ? 'flex' : 'none';
+                }
+            });
+        }
+
+        // Initial visibility check
+        updateArticleVisibility();
+    </script>
 </body>
 </html>
