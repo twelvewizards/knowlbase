@@ -1,0 +1,119 @@
+.article-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px 20px; /* Match the filter section's left/right margins */
+    justify-content: flex-start; /* Changed back to flex-start */
+    margin-top: 15px;
+    width: calc(100% - 40px); /* Full width minus padding */
+    box-sizing: border-box;
+}
+
+.article-button {
+    width: calc((100% - 45px) / 4);
+    height: 80px;
+    border: none;
+    border-radius: 16px; /* Increased from 8px */
+    cursor: pointer;
+    font-family: 'Public Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin: 0;
+    position: relative;
+}
+
+/* Shadow effect using pseudo-element */
+.article-button::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 4px;
+    width: 100%;
+    height: 105%;
+    border-radius: 16px; /* Increased from 8px to match the button */
+    z-index: -1;
+    transition: all 0.2s;
+}
+
+.article-button.mathematics {
+    background-color: #e25b74;
+    transition: all 0.2s;
+}
+
+.article-button.mathematics::after {
+    background-color: #b3475c;
+    transition: all 0.2s;
+}
+
+.article-button.mathematics:hover {
+    background-color: #b34860; /* Darker shade */
+}
+
+.article-button.mathematics:hover::after {
+    background-color: #8a3847; /* Darker shadow */
+}
+
+.article-button.art {
+    background-color: #4aa4d8;
+    transition: all 0.2s;
+}
+
+.article-button.art::after {
+    background-color: #3b83ad;
+    transition: all 0.2s;
+}
+
+.article-button.art:hover {
+    background-color: #3b83ad; /* Darker shade */
+}
+
+.article-button.art:hover::after {
+    background-color: #2d6587; /* Darker shadow */
+}
+
+.article-button.technology {
+    background-color: #57cc5b;
+    transition: all 0.2s;
+}
+
+.article-button.technology::after {
+    background-color: #45a348;
+    transition: all 0.2s;
+}
+
+.article-button.technology:hover {
+    background-color: #45a348; /* Darker shade */
+}
+
+.article-button.technology:hover::after {
+    background-color: #357f37; /* Darker shadow */
+}
+
+/* Remove the transform scale effect */
+.article-button:hover {
+    /* transform: scale(1.02); removed */
+}
+
+/* Add New button styles */
+.article-button.add-new {
+    background-color: #a0a0a0; /* Lighter gray */
+    transition: all 0.2s;
+}
+
+.article-button.add-new::after {
+    background-color: #808080; /* Lighter shadow */
+    transition: all 0.2s;
+}
+
+.article-button.add-new:hover {
+    background-color: #909090; /* Lighter hover state */
+}
+
+.article-button.add-new:hover::after {
+    background-color: #707070; /* Lighter shadow on hover */
+}
