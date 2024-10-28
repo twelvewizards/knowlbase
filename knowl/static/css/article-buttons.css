@@ -94,10 +94,6 @@
     background-color: #357f37; /* Darker shadow */
 }
 
-/* Remove the transform scale effect */
-.article-button:hover {
-    /* transform: scale(1.02); removed */
-}
 
 /* Add New button styles */
 .article-button.add-new {
