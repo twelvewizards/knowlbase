@@ -6,6 +6,7 @@
     <title>KnowlBase</title>
     {% load static %}
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+
     <!-- Global styles -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Navbar-specific styles -->
@@ -18,12 +19,13 @@
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <!-- Article buttons-specific styles -->
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
+
     <script defer src="{% static 'js/filter.js' %}"></script>
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <span class="logo">KnowlBase</span> <!-- Logo no longer clickable -->
+            <span class="logo">KnowlBase</span>
             <a href="#" class="nav-link">Home</a>
         </div>
         <div class="navbar-right">
@@ -42,8 +44,10 @@
 
     <!-- Dropdown arrow and rectangle container -->
     <div class="dropdown-container">
-        <div class="dropdown-rectangle"></div>
-        <div class="dropdown-arrow"></div>
+        <div class="horizontal-line"></div>
+        <div class="dropdown-rectangle">
+            <div class="dropdown-arrow"></div>
+        </div>
     </div>
 
     <!-- Filter and Search section -->
@@ -79,25 +83,28 @@
     </div>
 
     <div class="article-buttons-container">
-        <button class="article-button mathematics">Article One</button>
-        <button class="article-button art">Article Two</button>
-        <button class="article-button technology">Article Three</button>
-        <button class="article-button mathematics">Article Four</button>
-        <button class="article-button art">Article Five</button>
-        <button class="article-button technology">Article Six</button>
-        <button class="article-button mathematics">Article Seven</button>
-        <button class="article-button art">Article Eight</button>
-        <button class="article-button technology">Article Nine</button>
-        <button class="article-button mathematics">Article Ten</button>
-        <button class="article-button art">Article Eleven</button>
-        <button class="article-button technology">Article Twelve</button>
-        <button class="article-button mathematics">Article Thirteen</button>
-        <button class="article-button art">Article Fourteen</button>
-        <button class="article-button add-new">+ Add New</button>
+        <button class="article-button mathematics">Article one</button>
+        <button class="article-button art">Article one</button>
+        <button class="article-button technology">Article one</button>
+        <button class="article-button mathematics">Article one</button>
+        <button class="article-button art">Article one</button>
+        <button class="article-button technology">Article one</button>
+        <button class="article-button mathematics">Article one</button>
+        <button class="article-button art">Article one</button>
+        <button class="article-button technology">Article one</button>
+        <button class="article-button mathematics">Article one</button>
+        <button class="article-button art">Article one</button>
+        <button class="article-button technology">Article one</button>
+        <button class="article-button mathematics">Article one</button>
+        <button class="article-button art">Article one</button>
+        <button class="article-button add-new">+ Add new</button>
     </div>
 
     <div class="content">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Add this before closing body tag -->
+    <script src="{% static 'js/article-container.js' %}"></script>
 </body>
 </html>
