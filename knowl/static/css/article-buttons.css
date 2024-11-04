@@ -1,19 +1,19 @@
 .article-buttons-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    padding: 15px 20px; /* Match the filter section's left/right margins */
-    justify-content: flex-start; /* Changed back to flex-start */
+    gap: 30px 40px;
+    padding: 20px;
+    justify-content: flex-start;
     margin-top: 15px;
-    width: calc(100% - 40px); /* Full width minus padding */
+    width: calc(100% - 40px);
     box-sizing: border-box;
 }
 
 .article-button {
-    width: calc((100% - 45px) / 4);
+    width: calc((100% - 120px) / 4);
     height: 80px;
     border: none;
-    border-radius: 16px; /* Increased from 8px */
+    border-radius: 16px;
     cursor: pointer;
     font-family: 'Public Sans', sans-serif;
     font-size: 16px;
@@ -27,7 +27,6 @@
     position: relative;
 }
 
-/* Shadow effect using pseudo-element */
 .article-button::after {
     content: '';
     position: absolute;
@@ -35,7 +34,7 @@
     left: 4px;
     width: 100%;
     height: 105%;
-    border-radius: 16px; /* Increased from 8px to match the button */
+    border-radius: 16px;
     z-index: -1;
     transition: all 0.2s;
 }
@@ -51,11 +50,11 @@
 }
 
 .article-button.mathematics:hover {
-    background-color: #b34860; /* Darker shade */
+    background-color: #b34860;
 }
 
 .article-button.mathematics:hover::after {
-    background-color: #8a3847; /* Darker shadow */
+    background-color: #8a3847;
 }
 
 .article-button.art {
@@ -69,11 +68,11 @@
 }
 
 .article-button.art:hover {
-    background-color: #3b83ad; /* Darker shade */
+    background-color: #3b83ad;
 }
 
 .article-button.art:hover::after {
-    background-color: #2d6587; /* Darker shadow */
+    background-color: #2d6587;
 }
 
 .article-button.technology {
@@ -87,29 +86,27 @@
 }
 
 .article-button.technology:hover {
-    background-color: #45a348; /* Darker shade */
+    background-color: #45a348;
 }
 
 .article-button.technology:hover::after {
-    background-color: #357f37; /* Darker shadow */
+    background-color: #357f37;
 }
 
-
-/* Add New button styles */
 .article-button.add-new {
-    background-color: #a0a0a0; /* Lighter gray */
+    background-color: #a0a0a0;
     transition: all 0.2s;
 }
 
 .article-button.add-new::after {
-    background-color: #808080; /* Lighter shadow */
+    background-color: #808080;
     transition: all 0.2s;
 }
 
 .article-button.add-new:hover {
-    background-color: #909090; /* Lighter hover state */
+    background-color: #909090;
 }
 
 .article-button.add-new:hover::after {
-    background-color: #707070; /* Lighter shadow on hover */
+    background-color: #707070;
 }
