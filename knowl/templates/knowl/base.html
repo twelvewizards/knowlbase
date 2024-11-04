@@ -82,27 +82,26 @@
         </div>
     </div>
 
+    <!-- Article buttons section -->
     <div class="article-buttons-container">
-        <button class="article-button mathematics">Article one</button>
-        <button class="article-button art">Article one</button>
-        <button class="article-button technology">Article one</button>
-        <button class="article-button mathematics">Article one</button>
-        <button class="article-button art">Article one</button>
-        <button class="article-button technology">Article one</button>
-        <button class="article-button mathematics">Article one</button>
-        <button class="article-button art">Article one</button>
-        <button class="article-button technology">Article one</button>
-        <button class="article-button mathematics">Article one</button>
-        <button class="article-button art">Article one</button>
-        <button class="article-button technology">Article one</button>
-        <button class="article-button mathematics">Article one</button>
-        <button class="article-button art">Article one</button>
+        {% for article in articles %}
+            <!-- Check category ID and assign the appropriate class -->
+            <button class="article-button 
+                {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% else %}default{% endif %}">
+                {{ article.title }}
+            </button>
+        {% endfor %}
         <button class="article-button add-new">+ Add new</button>
     </div>
 
     <div class="content">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Pass article data to JavaScript -->
+    <script id="articlesData" type="application/json">
+        {{ articles|json_script:"articlesData" }}
+    </script>
 
     <!-- Add this before closing body tag -->
     <script src="{% static 'js/article-container.js' %}"></script>

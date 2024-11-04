@@ -5,11 +5,10 @@ class Category(models.Model):
 
     class Meta:
         db_table = 'categories'
-        managed = False 
+        managed = False
 
     def __str__(self):
         return self.name
-
 
 class Type(models.Model):
     name = models.CharField(max_length=50)
@@ -21,7 +20,6 @@ class Type(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class Article(models.Model):
     title = models.CharField(max_length=255)
