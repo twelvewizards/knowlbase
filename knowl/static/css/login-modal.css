@@ -1,0 +1,132 @@
+/* Dark overlay styling */
+.overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+    z-index: 999; /* Layer above other content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Modal styling */
+.login-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Above overlay */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Modal content */
+.modal-content {
+    text-align: center;
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+/* Form input styling */
+.input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.input-group label img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.input-group input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-size: 14px;
+}
+
+/* Show password button */
+.show-password-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.show-password-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Forgot password link */
+.forgot-password {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: #0066cc;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Login button */
+.login-submit-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-submit-btn:hover {
+    background-color: #3b78c2;
+}
+
+/* Sign up link */
+.signup-link {
+    font-size: 14px;
+    color: #888;
+    margin-top: 20px;
+}
+
+.signup-link a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}

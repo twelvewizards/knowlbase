@@ -14,8 +14,11 @@
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> <!-- CSS for login modal -->
+    <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}"> <!-- CSS for sign-up modal -->
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
+    <script defer src="{% static 'js/modal.js' %}"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -86,6 +89,55 @@
 
     <div class="content">
         {% block content %}{% endblock %}
+    </div>
+
+    <!-- Dark overlay for the modals -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Welcome back!</h2>
+            <p>Login to your account</p>
+            <form>
+                <div class="input-group">
+                    <label for="email"><img src="https://img.icons8.com/ios/50/000000/email.png" alt="Email Icon"></label>
+                    <input type="email" id="email" placeholder="Email Address">
+                </div>
+                <div class="input-group">
+                    <label for="password"><img src="https://img.icons8.com/ios/50/000000/lock.png" alt="Password Icon"></label>
+                    <input type="password" id="password" placeholder="Password">
+                    <button type="button" class="show-password-btn"><img src="https://img.icons8.com/ios/50/000000/visible.png" alt="Show Password Icon"></button>
+                </div>
+                <a href="#" class="forgot-password">Forgot password?</a>
+                <button type="submit" class="login-submit-btn">Login</button>
+            </form>
+            <p class="signup-link">Don’t have an account? <a href="#" class="open-signup-modal">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Sign-Up Modal -->
+    <div class="signup-modal" id="signupModal">
+        <div class="modal-content">
+            <h2>Join KnowlBase!</h2>
+            <p>Create a new account</p>
+            <form>
+                <div class="input-group">
+                    <label for="signup-email"><img src="https://img.icons8.com/ios/50/000000/email.png" alt="Email Icon"></label>
+                    <input type="email" id="signup-email" placeholder="Email Address">
+                </div>
+                <div class="input-group">
+                    <label for="signup-password"><img src="https://img.icons8.com/ios/50/000000/lock.png" alt="Password Icon"></label>
+                    <input type="password" id="signup-password" placeholder="Password">
+                </div>
+                <div class="input-group">
+                    <label for="confirm-password"><img src="https://img.icons8.com/ios/50/000000/lock.png" alt="Confirm Password Icon"></label>
+                    <input type="password" id="confirm-password" placeholder="Confirm Password">
+                </div>
+                <button type="submit" class="signup-submit-btn">Sign Up</button>
+            </form>
+            <p class="login-link">Already have an account? <a href="#" class="open-login-modal">Log in</a></p>
+        </div>
     </div>
 
     <!-- Embed the articles JSON data in a <script> tag -->
