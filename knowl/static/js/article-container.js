@@ -4,9 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const articlesData = JSON.parse(document.getElementById('articlesData').textContent);
         console.log("Articles Data Loaded:", articlesData);
 
-        // Select the container where the article buttons will be displayed
+        // Select necessary DOM elements
         const articleButtonsContainer = document.querySelector('.article-buttons-container');
         const filterButtons = document.querySelectorAll('.category-filters .filter-option input');
+        const contentSection = document.querySelector('.article-content-default');
+        const dropdownContainer = document.querySelector('.dropdown-container'); // Select the dropdown container
 
         if (!articleButtonsContainer) {
             console.error("Article buttons container not found!");
@@ -55,10 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Append the button to the container
                 articleButtonsContainer.appendChild(button);
 
-                // Add click event to handle article content display
+                // Add click event to display article content
                 button.addEventListener('click', function() {
                     console.log("Article Clicked:", article);
-                    // Implement logic to display article details
+                    contentSection.classList.remove('article-content-default');
+                    contentSection.classList.add('article-content-expanded');
+                    updateContentSection(article);
                 });
             });
 
@@ -75,33 +79,93 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // Function to update the content section with the selected article's details
+        function updateContentSection(article) {
+            contentSection.innerHTML = `
+                <div class="article-header">
+                    <div class="header-section">
+                        <div class="header-item">
+                            <span class="header-label">Name</span>
+                            <span class="header-value">${article.title}</span>
+                        </div>
+                        <div class="header-item">
+                            <span class="header-label">Born</span>
+                            <span class="header-value">${article.born || '-'}</span>
+                        </div>
+                        <div class="header-item">
+                            <span class="header-label">Died</span>
+                            <span class="header-value">${article.died || '-'}</span>
+                        </div>
+                    </div>
+                    <div class="header-section">
+                        <div class="header-item">
+                            <span class="header-label">Nationality/Developer</span>
+                            <span class="header-value">${article.nationality || article.developer || '-'}</span>
+                        </div>
+                        <div class="header-item">
+                            <span class="header-label">Known For</span>
+                            <span class="header-value">${article.known_for || '-'}</span>
+                        </div>
+                        <div class="header-item">
+                            <span class="header-label">Notable Work</span>
+                            <span class="header-value">${article.notable_work || '-'}</span>
+                        </div>
+                    </div>
+                    <div class="header-section">
+                        <div class="header-item">
+                            <span class="header-label">Location</span>
+                            <span class="header-value">${article.location || '-'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="article-content">
+                    <p>${article.about || 'No description available.'}</p>
+                </div>
+                <div class="article-footer">
+                    <div class="footer-group">
+                        <span class="footer-item">Dimensions: ${article.dimensions || '-'}</span>
+                        <span class="footer-item">Medium: ${article.medium || '-'}</span>
+                        <span class="footer-item">Designed by: ${article.designed_by || '-'}</span>
+                        <span class="footer-item">Year: ${article.year || '-'}</span>
+                    </div>
+                    <div class="footer-group">
+                        <span class="footer-item">Type: ${article.type__name || '-'}</span>
+                        <span class="footer-item">Category: ${article.category__name || '-'}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add click event to the dropdown arrow container to toggle content visibility
+        dropdownContainer.addEventListener('click', function() {
+            if (contentSection.classList.contains('article-content-expanded')) {
+                contentSection.classList.remove('article-content-expanded');
+                contentSection.classList.add('article-content-default');
+                contentSection.innerHTML = '<p>Click an article to view its contents</p>';
+            }
+        });
+
         // Initial render of all articles
         renderArticles();
 
         // Add click event listeners to each filter radio button
         filterButtons.forEach(button => {
-            console.log("Attaching event listener to:", button.name);
             button.addEventListener('click', function() {
-                // Toggle the active state of the clicked category
                 if (button.name.includes('art')) {
                     activeCategories.art = !activeCategories.art;
-                    button.checked = activeCategories.art; // Update the visual state of the radio button
+                    button.checked = activeCategories.art;
                 } else if (button.name.includes('math')) {
                     activeCategories.mathematics = !activeCategories.mathematics;
-                    button.checked = activeCategories.mathematics; // Update the visual state of the radio button
+                    button.checked = activeCategories.mathematics;
                 } else if (button.name.includes('tech')) {
                     activeCategories.technology = !activeCategories.technology;
-                    button.checked = activeCategories.technology; // Update the visual state of the radio button
+                    button.checked = activeCategories.technology;
                 }
-
-                // Log the updated active categories
-                console.log("Active Categories:", activeCategories);
 
                 // Re-render articles based on the updated active categories
                 renderArticles();
             });
         });
-
     } catch (error) {
         console.error("Failed to parse articles data:", error);
     }
