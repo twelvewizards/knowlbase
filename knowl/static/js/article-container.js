@@ -1,37 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Fetch the articles data from the JSON script tag
         const articlesData = JSON.parse(document.getElementById('articlesData').textContent);
         console.log("Articles Data Loaded:", articlesData);
 
-        // Select necessary DOM elements
         const articleButtonsContainer = document.querySelector('.article-buttons-container');
         const filterButtons = document.querySelectorAll('.category-filters .filter-option input');
         const contentSection = document.querySelector('.article-content-default');
-        const dropdownContainer = document.querySelector('.dropdown-container'); // Select the dropdown container
+        const dropdownContainer = document.querySelector('.dropdown-container');
 
-        if (!articleButtonsContainer) {
-            console.error("Article buttons container not found!");
-            return;
-        }
-        if (!filterButtons.length) {
-            console.error("Filter buttons not found!");
+        if (!articleButtonsContainer || !filterButtons.length) {
+            console.error("Required elements not found!");
             return;
         }
 
-        // Track which categories are currently active
-        const activeCategories = {
-            art: true,
-            mathematics: true,
-            technology: true,
-        };
+        const activeCategories = { art: true, mathematics: true, technology: true };
 
-        // Function to render article buttons based on active categories
         function renderArticles() {
-            // Clear the existing article buttons
             articleButtonsContainer.innerHTML = '';
-
-            // Filter articles based on active categories
             const filteredArticles = articlesData.filter(article => {
                 if (article.category_id === 1 && activeCategories.art) return true;
                 if (article.category_id === 2 && activeCategories.mathematics) return true;
@@ -39,25 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             });
 
-            // Create and append buttons for each filtered article
             filteredArticles.forEach(article => {
                 const button = document.createElement('button');
                 button.className = 'article-button';
                 button.textContent = article.title;
+                if (article.category_id === 1) button.classList.add('art');
+                if (article.category_id === 2) button.classList.add('mathematics');
+                if (article.category_id === 3) button.classList.add('technology');
 
-                // Add category-specific classes for styling
-                if (article.category_id === 1) {
-                    button.classList.add('art');
-                } else if (article.category_id === 2) {
-                    button.classList.add('mathematics');
-                } else if (article.category_id === 3) {
-                    button.classList.add('technology');
-                }
-
-                // Append the button to the container
                 articleButtonsContainer.appendChild(button);
 
-                // Add click event to display article content
                 button.addEventListener('click', function() {
                     console.log("Article Clicked:", article);
                     contentSection.classList.remove('article-content-default');
@@ -66,20 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Add the "Add New" button at the end
             const addNewButton = document.createElement('button');
             addNewButton.className = 'article-button add-new';
             addNewButton.textContent = '+ Add new';
             articleButtonsContainer.appendChild(addNewButton);
 
-            // Add click event to the "Add New" button
             addNewButton.addEventListener('click', function() {
                 console.log("Add New button clicked!");
-                // Implement logic for adding a new article
+                // Logic for adding a new article
             });
         }
 
-        // Function to update the content section with the selected article's details
         function updateContentSection(article) {
             contentSection.innerHTML = `
                 <div class="article-header">
@@ -136,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
 
-        // Add click event to the dropdown arrow container to toggle content visibility
         dropdownContainer.addEventListener('click', function() {
             if (contentSection.classList.contains('article-content-expanded')) {
                 contentSection.classList.remove('article-content-expanded');
@@ -145,10 +117,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Initial render of all articles
         renderArticles();
 
-        // Add click event listeners to each filter radio button
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 if (button.name.includes('art')) {
@@ -161,8 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     activeCategories.technology = !activeCategories.technology;
                     button.checked = activeCategories.technology;
                 }
-
-                // Re-render articles based on the updated active categories
                 renderArticles();
             });
         });
