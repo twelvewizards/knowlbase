@@ -9,18 +9,13 @@
 
     <!-- Global styles -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <!-- Navbar-specific styles -->
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <!-- Article contents-specific styles -->
     <link rel="stylesheet" href="{% static 'css/article-contents.css' %}">
-    <!-- Filter-specific styles -->
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
-    <!-- Search-specific styles -->
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
-    <!-- Article buttons-specific styles -->
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
 
-    <script defer src="{% static 'js/filter.js' %}"></script>
+    <script defer src="{% static 'js/article-container.js' %}"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -85,7 +80,6 @@
     <!-- Article buttons section -->
     <div class="article-buttons-container">
         {% for article in articles %}
-            <!-- Check category ID and assign the appropriate class -->
             <button class="article-button 
                 {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% else %}default{% endif %}">
                 {{ article.title }}
@@ -98,12 +92,9 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Pass article data to JavaScript -->
-    <script id="articlesData" type="application/json">
-        {{ articles|json_script:"articlesData" }}
-    </script>
-
-    <!-- Add this before closing body tag -->
-    <script src="{% static 'js/article-container.js' %}"></script>
+    <!-- Embed the articles JSON data in a <script> tag -->
+        <script id="articlesData" type="application/json">
+            {{ articles_json|safe }}
+        </script>
 </body>
 </html>
