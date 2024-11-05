@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
-    <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> <!-- New CSS for login modal -->
+    <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> <!-- CSS for login modal -->
+    <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}"> <!-- CSS for sign-up modal -->
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
 </head>
@@ -89,7 +90,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Dark overlay for the modal -->
+    <!-- Dark overlay for the modals -->
     <div class="overlay" id="overlay"></div>
 
     <!-- Login Modal -->
@@ -110,7 +111,31 @@
                 <a href="#" class="forgot-password">Forgot password?</a>
                 <button type="submit" class="login-submit-btn">Login</button>
             </form>
-            <p class="signup-link">Don’t have an account? <a href="#">Sign Up</a></p>
+            <p class="signup-link">Don’t have an account? <a href="#" class="open-signup-modal">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Sign-Up Modal -->
+    <div class="signup-modal" id="signupModal">
+        <div class="modal-content">
+            <h2>Join KnowlBase!</h2>
+            <p>Create a new account</p>
+            <form>
+                <div class="input-group">
+                    <label for="signup-email"><img src="https://img.icons8.com/ios/50/000000/email.png" alt="Email Icon"></label>
+                    <input type="email" id="signup-email" placeholder="Email Address">
+                </div>
+                <div class="input-group">
+                    <label for="signup-password"><img src="https://img.icons8.com/ios/50/000000/lock.png" alt="Password Icon"></label>
+                    <input type="password" id="signup-password" placeholder="Password">
+                </div>
+                <div class="input-group">
+                    <label for="confirm-password"><img src="https://img.icons8.com/ios/50/000000/lock.png" alt="Confirm Password Icon"></label>
+                    <input type="password" id="confirm-password" placeholder="Confirm Password">
+                </div>
+                <button type="submit" class="signup-submit-btn">Sign Up</button>
+            </form>
+            <p class="login-link">Already have an account? <a href="#" class="open-login-modal">Log in</a></p>
         </div>
     </div>
 
@@ -123,9 +148,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loginBtn = document.querySelector('.login-btn');
+            const signupBtn = document.querySelector('.signup-btn');
             const overlay = document.getElementById('overlay');
             const loginModal = document.getElementById('loginModal');
+            const signupModal = document.getElementById('signupModal');
+            const openSignupLink = document.querySelector('.open-signup-modal');
+            const openLoginLink = document.querySelector('.open-login-modal');
 
+            // Open Login Modal
             loginBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 overlay.style.display = 'block';
@@ -134,17 +164,63 @@
                     overlay.style.opacity = '1';
                     loginModal.style.opacity = '1';
                     loginModal.style.transform = 'translate(-50%, -50%) scale(1)';
-                }, 10); // Small delay for smooth transition
+                }, 10);
             });
 
-            overlay.addEventListener('click', function() {
-                overlay.style.opacity = '0';
+            // Open Sign-Up Modal
+            signupBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                overlay.style.display = 'block';
+                signupModal.style.display = 'block';
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                    signupModal.style.opacity = '1';
+                    signupModal.style.transform = 'translate(-50%, -50%) scale(1)';
+                }, 10);
+            });
+
+            // Link from Login to Sign-Up Modal
+            openSignupLink.addEventListener('click', function(e) {
+                e.preventDefault();
                 loginModal.style.opacity = '0';
                 loginModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
                 setTimeout(() => {
+                    loginModal.style.display = 'none';
+                    signupModal.style.display = 'block';
+                    setTimeout(() => {
+                        signupModal.style.opacity = '1';
+                        signupModal.style.transform = 'translate(-50%, -50%) scale(1)';
+                    }, 10);
+                }, 300);
+            });
+
+            // Link from Sign-Up to Login Modal
+            openLoginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                signupModal.style.opacity = '0';
+                signupModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                setTimeout(() => {
+                    signupModal.style.display = 'none';
+                    loginModal.style.display = 'block';
+                    setTimeout(() => {
+                        loginModal.style.opacity = '1';
+                        loginModal.style.transform = 'translate(-50%, -50%) scale(1)';
+                    }, 10);
+                }, 300);
+            });
+
+            // Close modals when overlay is clicked
+            overlay.addEventListener('click', function() {
+                overlay.style.opacity = '0';
+                loginModal.style.opacity = '0';
+                signupModal.style.opacity = '0';
+                loginModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                signupModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                setTimeout(() => {
                     overlay.style.display = 'none';
                     loginModal.style.display = 'none';
-                }, 300); // Match the transition duration
+                    signupModal.style.display = 'none';
+                }, 300);
             });
         });
     </script>
