@@ -58,21 +58,21 @@
 }
 
 .article-button.art {
-    background-color: #4aa4d8;
+    background-color: #4aa4d8; /* Updated to blue */
     transition: all 0.2s;
 }
 
 .article-button.art::after {
-    background-color: #3b83ad;
+    background-color: #3b83ad; /* Darker blue shade for shadow */
     transition: all 0.2s;
 }
 
 .article-button.art:hover {
-    background-color: #3b83ad;
+    background-color: #3b83ad; /* Darker blue on hover */
 }
 
 .article-button.art:hover::after {
-    background-color: #2d6587;
+    background-color: #2d6587; /* Even darker blue for shadow on hover */
 }
 
 .article-button.technology {

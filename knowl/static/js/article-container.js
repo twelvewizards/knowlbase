@@ -1,139 +1,108 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const articleButtons = document.querySelectorAll('.article-button:not(.add-new)');
-    const defaultContent = document.querySelector('.article-content-default');
-    const dropdownArrow = document.querySelector('.dropdown-arrow');
-    const dropdownRectangle = document.querySelector('.dropdown-rectangle');
+    try {
+        // Fetch the articles data from the JSON script tag
+        const articlesData = JSON.parse(document.getElementById('articlesData').textContent);
+        console.log("Articles Data Loaded:", articlesData);
 
-    articleButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Hide default content
-            defaultContent.style.display = 'none';
+        // Select the container where the article buttons will be displayed
+        const articleButtonsContainer = document.querySelector('.article-buttons-container');
+        const filterButtons = document.querySelectorAll('.category-filters .filter-option input');
 
-            // Rotate arrow
-            dropdownArrow.classList.add('rotated');
-
-            // Create and show active content
-            const activeContent = createActiveContent();
-
-            // Remove any existing active content
-            const existingActive = document.querySelector('.article-content-active');
-            if (existingActive) {
-                existingActive.remove();
-            }
-
-            // Insert new active content after default content
-            defaultContent.insertAdjacentElement('afterend', activeContent);
-
-            // Trigger animation after a small delay to ensure DOM update
-            setTimeout(() => {
-                activeContent.classList.add('expanded');
-            }, 10);
-        });
-    });
-
-    // Add click handler for dropdown rectangle
-    dropdownRectangle.addEventListener('click', function() {
-        const activeContent = document.querySelector('.article-content-active');
-        if (activeContent) {
-            if (!activeContent.classList.contains('expanded')) {
-                // Opening
-                activeContent.classList.add('expanded');
-                defaultContent.style.display = 'none';
-                dropdownArrow.classList.add('rotated');
-            } else {
-                // Closing
-                activeContent.classList.remove('expanded');
-                dropdownArrow.classList.remove('rotated');
-
-                // Remove the content after animation completes
-                setTimeout(() => {
-                    activeContent.remove();
-                    defaultContent.style.display = 'flex';
-                }, 300);
-            }
+        if (!articleButtonsContainer) {
+            console.error("Article buttons container not found!");
+            return;
         }
-    });
+        if (!filterButtons.length) {
+            console.error("Filter buttons not found!");
+            return;
+        }
+
+        // Track which categories are currently active
+        const activeCategories = {
+            art: true,
+            mathematics: true,
+            technology: true,
+        };
+
+        // Function to render article buttons based on active categories
+        function renderArticles() {
+            // Clear the existing article buttons
+            articleButtonsContainer.innerHTML = '';
+
+            // Filter articles based on active categories
+            const filteredArticles = articlesData.filter(article => {
+                if (article.category_id === 1 && activeCategories.art) return true;
+                if (article.category_id === 2 && activeCategories.mathematics) return true;
+                if (article.category_id === 3 && activeCategories.technology) return true;
+                return false;
+            });
+
+            // Create and append buttons for each filtered article
+            filteredArticles.forEach(article => {
+                const button = document.createElement('button');
+                button.className = 'article-button';
+                button.textContent = article.title;
+
+                // Add category-specific classes for styling
+                if (article.category_id === 1) {
+                    button.classList.add('art');
+                } else if (article.category_id === 2) {
+                    button.classList.add('mathematics');
+                } else if (article.category_id === 3) {
+                    button.classList.add('technology');
+                }
+
+                // Append the button to the container
+                articleButtonsContainer.appendChild(button);
+
+                // Add click event to handle article content display
+                button.addEventListener('click', function() {
+                    console.log("Article Clicked:", article);
+                    // Implement logic to display article details
+                });
+            });
+
+            // Add the "Add New" button at the end
+            const addNewButton = document.createElement('button');
+            addNewButton.className = 'article-button add-new';
+            addNewButton.textContent = '+ Add new';
+            articleButtonsContainer.appendChild(addNewButton);
+
+            // Add click event to the "Add New" button
+            addNewButton.addEventListener('click', function() {
+                console.log("Add New button clicked!");
+                // Implement logic for adding a new article
+            });
+        }
+
+        // Initial render of all articles
+        renderArticles();
+
+        // Add click event listeners to each filter radio button
+        filterButtons.forEach(button => {
+            console.log("Attaching event listener to:", button.name);
+            button.addEventListener('click', function() {
+                // Toggle the active state of the clicked category
+                if (button.name.includes('art')) {
+                    activeCategories.art = !activeCategories.art;
+                    button.checked = activeCategories.art; // Update the visual state of the radio button
+                } else if (button.name.includes('math')) {
+                    activeCategories.mathematics = !activeCategories.mathematics;
+                    button.checked = activeCategories.mathematics; // Update the visual state of the radio button
+                } else if (button.name.includes('tech')) {
+                    activeCategories.technology = !activeCategories.technology;
+                    button.checked = activeCategories.technology; // Update the visual state of the radio button
+                }
+
+                // Log the updated active categories
+                console.log("Active Categories:", activeCategories);
+
+                // Re-render articles based on the updated active categories
+                renderArticles();
+            });
+        });
+
+    } catch (error) {
+        console.error("Failed to parse articles data:", error);
+    }
 });
-
-function createActiveContent() {
-    const container = document.createElement('div');
-    container.className = 'article-content-active';
-
-    // Add edit/delete buttons
-    container.innerHTML = `
-        <div class="article-actions">
-            <button class="action-button edit">
-                <img src="https://img.icons8.com/material-outlined/24/000000/edit.png" alt="Edit">
-            </button>
-            <button class="action-button delete">
-                <img src="https://img.icons8.com/material-outlined/24/000000/trash.png" alt="Delete">
-            </button>
-        </div>
-        <div class="article-header">
-            <div class="header-section">
-                <div class="header-item">
-                    <span class="header-label">Name</span>
-                    <span class="header-value">Sample Name</span>
-                </div>
-                <div class="header-item">
-                    <span class="header-label">Born</span>
-                    <span class="header-value">1990</span>
-                </div>
-                <div class="header-item">
-                    <span class="header-label">Died</span>
-                    <span class="header-value">-</span>
-                </div>
-            </div>
-            <div class="header-section">
-                <div class="header-item">
-                    <span class="header-label">Nationality/Developer</span>
-                    <span class="header-value">Sample Nationality</span>
-                </div>
-                <div class="header-item">
-                    <span class="header-label">Known For</span>
-                    <span class="header-value">Sample Achievement</span>
-                </div>
-                <div class="header-item">
-                    <span class="header-label">Notable Work</span>
-                    <span class="header-value">Sample Work</span>
-                </div>
-            </div>
-            <div class="header-section">
-                <div class="header-item">
-                    <span class="header-label">Location</span>
-                    <span class="header-value">Sample Location</span>
-                </div>
-            </div>
-        </div>
-        <div class="article-content">
-            <p>Lorem ipsum dolor sit amet consectetur. Ac lobortis vitae est blandit montes pellentesque non viverra quis. Pellentesque in at sed nulla mi. Varius consectetur nisl eget non netus vestibulum sollicitudin felis. Condimentum turpis dolor tempor enim feugiat vel mauris nibh posuere. Pulvinar tincidunt placerat elit tincidunt.</p>
-            <p>Magna interdum ipsum amet enim semper vitae imperdiet lobortis. Facilisi tempor a interdum donec duis diam neque amet magna. Eget tellus metus elementum platea malesuada aliquet nunc. Ultrices neque nec quam faucibus risus sed diam aliquet.</p>
-            <p>Rhoncus a auctor sollicitudin interdum a. Malesuada lectus quisque adipiscing augue nibh sagittis vitae orci. Tristique facilisis tincidunt odio ut urna etiam pellentesque.</p>
-        </div>
-        <div class="article-footer">
-            <div class="footer-group">
-                <div class="footer-item">
-                    <span class="header-label">Dimensions</span>
-                    <span class="footer-separator">|</span>
-                    <span class="header-value">Medium</span>
-                </div>
-            </div>
-            <div class="footer-group">
-                <div class="footer-item">
-                    <span class="header-label">Designed by</span>
-                    <span class="footer-separator">|</span>
-                    <span class="header-value">Year</span>
-                </div>
-            </div>
-            <div class="footer-group">
-                <div class="footer-item">
-                    <span class="header-label">Type</span>
-                    <span class="footer-separator">|</span>
-                    <span class="header-value">Category</span>
-                </div>
-            </div>
-        </div>
-    `;
-
-    return container;
-}
