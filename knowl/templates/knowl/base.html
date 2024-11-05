@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> <!-- New CSS for login modal -->
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
 </head>
@@ -88,9 +89,64 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Dark overlay for the modal -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="modal-content">
+            <h2>Welcome back!</h2>
+            <p>Login to your account</p>
+            <form>
+                <div class="input-group">
+                    <label for="email"><img src="https://img.icons8.com/ios/50/000000/email.png" alt="Email Icon"></label>
+                    <input type="email" id="email" placeholder="Email Address">
+                </div>
+                <div class="input-group">
+                    <label for="password"><img src="https://img.icons8.com/ios/50/000000/lock.png" alt="Password Icon"></label>
+                    <input type="password" id="password" placeholder="Password">
+                    <button type="button" class="show-password-btn"><img src="https://img.icons8.com/ios/50/000000/visible.png" alt="Show Password Icon"></button>
+                </div>
+                <a href="#" class="forgot-password">Forgot password?</a>
+                <button type="submit" class="login-submit-btn">Login</button>
+            </form>
+            <p class="signup-link">Don’t have an account? <a href="#">Sign Up</a></p>
+        </div>
+    </div>
+
     <!-- Embed the articles JSON data in a <script> tag -->
     <script id="articlesData" type="application/json">
         {{ articles_json|safe }}
+    </script>
+
+    <!-- JavaScript for modal functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.querySelector('.login-btn');
+            const overlay = document.getElementById('overlay');
+            const loginModal = document.getElementById('loginModal');
+
+            loginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                overlay.style.display = 'block';
+                loginModal.style.display = 'block';
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                    loginModal.style.opacity = '1';
+                    loginModal.style.transform = 'translate(-50%, -50%) scale(1)';
+                }, 10); // Small delay for smooth transition
+            });
+
+            overlay.addEventListener('click', function() {
+                overlay.style.opacity = '0';
+                loginModal.style.opacity = '0';
+                loginModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    loginModal.style.display = 'none';
+                }, 300); // Match the transition duration
+            });
+        });
     </script>
 </body>
 </html>
