@@ -1,35 +1,151 @@
-# Step 1: Create and activate a virtual environment
-python -m venv ~env
-cd ~env/Scripts || cd ~env/bin  # Windows || Mac/Linux
-./activate
-cd ../..
+# Prerequisites
+1. Install Python
+2. Install Git
+3. Install PostgreSQL: Download and install PostgreSQL if it's not already installed.
+4. Add PostgreSQL to PATH: Ensure PostgreSQL's bin folder (e.g., C:\Program Files\PostgreSQL\<version>\bin) is in your system's PATH so you can use the psql command. (IMPORTANT!!)
 
 
-# Step 2: Clone the repository
-git clone https://github.com/twelvewizards/knowlbase
+# Step-by-Step Setup Instructions
+
+**Step 1: Set Up the Database**
+1. Create Database in pgAdmin:
+- Open pgAdmin and connect to your PostgreSQL server.
+- Go to Object > Create > Database.
+- Name the database KnowlBase (CASE-SENSITIVE!!).
+- Click Save.
+  
+2. Import Database from SQL File:
+- Download the knowlbase.sql file. https://drive.google.com/file/d/1upt8Q6dp-hMZSwPp7V2rXxlm_er7jMdW/view?usp=drive_link
+- Open Command Prompt and use the following command to import the data: psql -U postgres -h localhost -d KnowlBase -f "C:/path/to/KnowlBase.sql"
+Replace C:/path/to/KnowlBase.sql with the actual path to the downloaded knowlbase.sql file.
+This command will populate the KnowlBase database with initial data.
 
 
-# Step 3: Install required dependances 
-pip install =r requirements.txt
+**Step 2: Clone the Repository**
+1. Clone the Project: git clone https://github.com/twelvewizards/knowlbase
+2. Navigate into the project directory: cd knowlbase
 
 
-# Step 4: Start server
-python manage.py runserver
+**Step 3: Set Up the Virtual Environment**
+1. Create a Virtual Environment: python -m venv ~env
+2. Activate: ~env/Scripts then ./activate or activate.ps1
+   ~env is the name of your venv it doesn't need to be "~env" it can be anything just add it to the gitignore
+
+   
+**Step 4: Install Project Dependencies**
+1. Install Dependencies: pip install -r requirements.txt
 
 
-# Step 5: Create a new branch or Navigate to existing branch
-git checkout -b 'new_branch_name' || git checkout 'branch_name'
+**Step 5: Run the Development Server**
+1. Start the server: python manage.py runserver
+
+**Step 6: Version Control Workflow**
+
+- Creating or Navigating to a Branch
+   Create a New Branch: git checkout -b new_branch_name
+   Switch to existing branch: git checkout branch_name
+
+- Commiting Changes
+  Add Changes: git add .
+  Commit Changes: -m "your commit message"
+
+- Pushing Changes
+  Push Changes to Remote: git push -u origin new_branch_name
+
+- Additional Git Commands
+  To switch branches: git checkout main  # switch to main branch
+                      git pull origin main  # pull the latest changes from the repository
+                      git checkout branch_name  # switch to your branch
+                      git merge main  # merge latest changes from main into your branch
 
 
-# Step 6: Add and commit your changes
-git add .
-git commit -m "your commit message"
 
-# Step 7: Push the changes to the remote repository
-git push -u origin 'new_branch_name'
 
-# To switch branches
-git checkout main (switch to main branch)
-git pull origin main (pull the latest changes from repo)
-git checkout 'branch name' (switch to said branch)
-git merge main (merges latest changes from main into branch) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# KnowlBase Project Setup Guide
+
+Follow these steps to set up the project on your local machine.
+
+---
+
+## Prerequisites
+
+1. **Install Python**: Ensure you have Python 3.x installed.
+2. **Install Git**: Required for version control and cloning the repository.
+3. **Install PostgreSQL**: Download and install PostgreSQL if it's not already installed.
+4. **Add PostgreSQL to PATH**:
+   - Add PostgreSQL's `bin` folder (e.g., `C:\Program Files\PostgreSQL\<version>\bin`) to your system’s PATH.
+   - This allows you to use the `psql` command from the command line. **(IMPORTANT)**
+
+---
+
+## Step-by-Step Setup Instructions
+
+### Step 1: Set Up the Database
+
+1. **Create Database in pgAdmin**:
+   - Open **pgAdmin** and connect to your PostgreSQL server.
+   - Go to **Object** > **Create** > **Database**.
+   - Name the database **KnowlBase** (CASE-SENSITIVE).
+   - Click **Save**.
+
+2. **Import Database from SQL File**:
+   - Download the `knowlbase.sql` file from [this link](https://drive.google.com/file/d/1upt8Q6dp-hMZSwPp7V2rXxlm_er7jMdW/view?usp=drive_link).
+   - Open **Command Prompt** and run the following command to import the data: psql -U postgres -h localhost -d KnowlBase -f "C:/path/to/KnowlBase.sql"
+   - Replace `C:/path/to/KnowlBase.sql` with the actual path to the downloaded `knowlbase.sql` file.
+   - This command will populate the **KnowlBase** database with initial data.
+
+---
+
+### Step 2: Clone the Repository
+
+1. **Clone the Project**:
+   ```bash
+   git clone https://github.com/twelvewizards/knowlbase
+
+git merge main  # merge latest changes from main into your branch
+
