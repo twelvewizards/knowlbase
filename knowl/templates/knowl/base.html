@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="{% static 'css/filter.css' %}">
     <link rel="stylesheet" href="{% static 'css/search.css' %}">
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
-    <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> 
-    <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}"> 
+    <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> <!-- CSS for login modal -->
+    <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}"> <!-- CSS for sign-up modal -->
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
     <script defer src="{% static 'js/modal.js' %}"></script>
@@ -175,8 +175,8 @@
 
     <!-- Pass server-side variables to JavaScript -->
     <script>
-        const showLoginModal = {{ show_login_modal|default:"False"|lower }};
-        const showSignupModal = {{ show_signup_modal|default:"False"|lower }};
+       const showLoginModal = "{{ show_login_modal|default:'False'|lower }}" === "true";
+       const showSignupModal = "{{ show_signup_modal|default:'False'|lower }}" === "true";
     </script>
 </body>
 </html>
