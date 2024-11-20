@@ -10,6 +10,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Open Login Modal
     loginBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        openLoginModal();
+    });
+
+    // Open Sign-Up Modal
+    signupBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        openSignupModal();
+    });
+
+    // Link from Login to Sign-Up Modal
+    openSignupLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeLoginModal();
+        setTimeout(() => {
+            openSignupModal();
+        }, 300);
+    });
+
+    // Link from Sign-Up to Login Modal
+    openLoginLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeSignupModal();
+        setTimeout(() => {
+            openLoginModal();
+        }, 300);
+    });
+
+    // Close modals when overlay is clicked
+    overlay.addEventListener('click', function() {
+        closeLoginModal();
+        closeSignupModal();
+    });
+
+    // Functions to open and close modals
+    function openLoginModal() {
         overlay.style.display = 'block';
         loginModal.style.display = 'block';
         setTimeout(() => {
@@ -17,11 +52,19 @@ document.addEventListener('DOMContentLoaded', function() {
             loginModal.style.opacity = '1';
             loginModal.style.transform = 'translate(-50%, -50%) scale(1)';
         }, 10);
-    });
+    }
 
-    // Open Sign-Up Modal
-    signupBtn.addEventListener('click', function(e) {
-        e.preventDefault();
+    function closeLoginModal() {
+        overlay.style.opacity = '0';
+        loginModal.style.opacity = '0';
+        loginModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            loginModal.style.display = 'none';
+        }, 300);
+    }
+
+    function openSignupModal() {
         overlay.style.display = 'block';
         signupModal.style.display = 'block';
         setTimeout(() => {
@@ -29,49 +72,24 @@ document.addEventListener('DOMContentLoaded', function() {
             signupModal.style.opacity = '1';
             signupModal.style.transform = 'translate(-50%, -50%) scale(1)';
         }, 10);
-    });
+    }
 
-    // Link from Login to Sign-Up Modal
-    openSignupLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        loginModal.style.opacity = '0';
-        loginModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
-        setTimeout(() => {
-            loginModal.style.display = 'none';
-            signupModal.style.display = 'block';
-            setTimeout(() => {
-                signupModal.style.opacity = '1';
-                signupModal.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 10);
-        }, 300);
-    });
-
-    // Link from Sign-Up to Login Modal
-    openLoginLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        signupModal.style.opacity = '0';
-        signupModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
-        setTimeout(() => {
-            signupModal.style.display = 'none';
-            loginModal.style.display = 'block';
-            setTimeout(() => {
-                loginModal.style.opacity = '1';
-                loginModal.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 10);
-        }, 300);
-    });
-
-    // Close modals when overlay is clicked
-    overlay.addEventListener('click', function() {
+    function closeSignupModal() {
         overlay.style.opacity = '0';
-        loginModal.style.opacity = '0';
         signupModal.style.opacity = '0';
-        loginModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
         signupModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
         setTimeout(() => {
             overlay.style.display = 'none';
-            loginModal.style.display = 'none';
             signupModal.style.display = 'none';
         }, 300);
-    });
+    }
+
+    // Open modals based on server-side variables
+    if (typeof showLoginModal !== 'undefined' && showLoginModal) {
+        openLoginModal();
+    }
+
+    if (typeof showSignupModal !== 'undefined' && showSignupModal) {
+        openSignupModal();
+    }
 });
