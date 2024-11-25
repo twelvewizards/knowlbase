@@ -16,9 +16,11 @@
     <link rel="stylesheet" href="{% static 'css/article-buttons.css' %}">
     <link rel="stylesheet" href="{% static 'css/login-modal.css' %}"> <!-- CSS for login modal -->
     <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}"> <!-- CSS for sign-up modal -->
+    <link rel="stylesheet" href="{% static 'css/add-article-modal.css' %}">
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
     <script defer src="{% static 'js/modal.js' %}"></script>
+    <script defer src="{% static 'js/add-article.js' %}"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -140,9 +142,44 @@
         </div>
     </div>
 
+    <!-- Add Article Modal -->
+    <div class="add-article-modal" id="addArticleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adding Article</h2>
+                <button type="button" class="close-button">&times;</button>
+            </div>
+            <form id="addArticleForm" class="add-article-form">
+                <!-- Left side -->
+                <textarea 
+                    class="article-text-area" 
+                    name="about" 
+                    placeholder="Write article here..."
+                ></textarea>
+                
+                <!-- Right side -->
+                <div class="article-details">
+                    <div class="dropdown-group">
+                        <select name="category" id="category">
+                            <option value="">Select category</option>
+                        </select>
+                        <select name="type" id="type" disabled>
+                            <option value="">Type (sub category)</option>
+                        </select>
+                    </div>
+                    <div class="fields-container">
+                        <!-- Dynamic fields will be inserted here -->
+                    </div>
+                    <button type="submit" class="publish-btn">Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Embed the articles JSON data in a <script> tag -->
     <script id="articlesData" type="application/json">
         {{ articles_json|safe }}
     </script>
+    <script src="{% static 'js/add-article.js' %}"></script>
 </body>
 </html>
