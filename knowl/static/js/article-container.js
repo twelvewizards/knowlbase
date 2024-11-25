@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     try {
         const articlesData = JSON.parse(document.getElementById('articlesData').textContent);
         console.log("Articles Data Loaded:", articlesData);
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 articleButtonsContainer.appendChild(button);
 
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     console.log("Article Clicked:", article);
                     contentSection.classList.remove('article-content-default');
                     contentSection.classList.add('article-content-expanded');
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             addNewButton.textContent = '+ Add new';
             articleButtonsContainer.appendChild(addNewButton);
 
-            addNewButton.addEventListener('click', function() {
+            addNewButton.addEventListener('click', function () {
                 console.log("Add New button clicked!");
                 // Logic for adding a new article
             });
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
 
-        dropdownContainer.addEventListener('click', function() {
+        dropdownContainer.addEventListener('click', function () {
             if (contentSection.classList.contains('article-content-expanded')) {
                 contentSection.classList.remove('article-content-expanded');
                 contentSection.classList.add('article-content-default');
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderArticles();
 
         filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 if (button.name.includes('art')) {
                     activeCategories.art = !activeCategories.art;
                     button.checked = activeCategories.art;
