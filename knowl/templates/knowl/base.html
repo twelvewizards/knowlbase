@@ -18,12 +18,15 @@
     <link rel="stylesheet" href="{% static 'css/login-modal.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}">
     <link rel="stylesheet" href="{% static 'css/add-article-modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/manage-users-modal.css' %}">
+
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
     <script defer src="{% static 'js/modal.js' %}"></script>
     <script defer src="{% static 'js/add-article.js' %}"></script>
 </head>
 <body>
+    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" data-authenticated="{{ user_authenticated }}">
     <nav class="navbar">
         <div class="navbar-left">
             <span class="logo">KnowlBase</span>
@@ -201,6 +204,35 @@
         </div>
     </div>
 
+    <div class="overlay" id="overlay" style="display: none;"></div>
+
+    <div class="manage-users-modal" id="manageUsersModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage User Accounts</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="manage-users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Users will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        
+
+
     <!-- Embed the articles JSON data in a <script> tag -->
     <script id="articlesData" type="application/json">
         {{ articles_json|safe }}
@@ -208,6 +240,18 @@
     <script>
         const showLoginModal = "{{ show_login_modal|default:'False'|lower }}" === "true";
         const showSignupModal = "{{ show_signup_modal|default:'False'|lower }}" === "true";
+    </script>
+    <script>
+        function toggleManageUsersModal(show) {
+            const modal = document.getElementById("manageUsersModal");
+            modal.style.display = show ? "block" : "none";
+        }
+    
+        // Add event listener for the settings icon
+        document.querySelector(".settings-icon").addEventListener("click", (e) => {
+            e.preventDefault();
+            toggleManageUsersModal(true);
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,122 @@
+/* Manage Users Modal */
+.manage-users-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e; /* Dark background */
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%; /* Increase the width */
+    max-width: 1200px; /* Set a maximum width */
+    max-height: 80vh; /* Adjust to occupy more vertical space */
+    overflow: hidden; /* Hide overflow content */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Above overlay */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Header styling */
+.manage-users-modal .modal-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: white; /* Ensure the text color is white */
+    margin: 0;
+}
+
+/* Close button styling */
+.manage-users-modal .close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: white; /* Make the close button white */
+    cursor: pointer;
+}
+
+/* Table adjustments */
+.manage-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.manage-users-table th,
+.manage-users-table td {
+    text-align: left;
+    padding: 10px;
+}
+
+.manage-users-table th {
+    background-color: #2b2b2b;
+    color: white; /* Ensure header text is white */
+}
+
+.manage-users-table tr:nth-child(even) {
+    background-color: #252525;
+}
+
+.manage-users-table tr:nth-child(odd) {
+    background-color: #1e1e1e;
+}
+
+/* Center action buttons */
+.manage-users-table td:last-child {
+    text-align: center;
+}
+
+.action-cell {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Add space between the buttons */
+}
+
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.action-button img {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+}
+
+/* Hover effects for buttons */
+.action-button:hover {
+    transform: scale(1.2); /* Slightly increase size on hover */
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+}
+
+/* Specific styling for edit button */
+.action-button.edit-btn img {
+    filter: invert(50%) sepia(100%) saturate(2000%) hue-rotate(100deg) brightness(90%) contrast(100%);
+    /* Green color for edit icon */
+}
+
+.action-button.edit-btn:hover img {
+    filter: invert(50%) sepia(100%) saturate(3000%) hue-rotate(100deg) brightness(110%) contrast(120%);
+}
+
+/* Specific styling for delete button */
+.action-button.delete-btn img {
+    filter: invert(50%) sepia(100%) saturate(2000%) hue-rotate(0deg) brightness(90%) contrast(100%);
+    /* Red color for delete icon */
+}
+
+.action-button.delete-btn:hover img {
+    filter: invert(50%) sepia(100%) saturate(3000%) hue-rotate(0deg) brightness(110%) contrast(120%);
+}
