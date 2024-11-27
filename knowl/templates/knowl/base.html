@@ -18,17 +18,20 @@
     <link rel="stylesheet" href="{% static 'css/login-modal.css' %}">
     <link rel="stylesheet" href="{% static 'css/signup-modal.css' %}">
     <link rel="stylesheet" href="{% static 'css/add-article-modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/manage-users-modal.css' %}">
+
 
     <script defer src="{% static 'js/article-container.js' %}"></script>
     <script defer src="{% static 'js/modal.js' %}"></script>
     <script defer src="{% static 'js/add-article.js' %}"></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-left">
-            <span class="logo">KnowlBase</span>
-            <a href="#" class="nav-link">Home</a>
-        </div>
+    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" data-authenticated="{{ user_authenticated }}">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="{% url 'index' %}" class="logo">KnowlBase</a> <!-- Make the KnowlBase text clickable -->
+                <a href="#" class="nav-link">Home</a>
+            </div>
         <div class="navbar-right">
             {% if user.is_authenticated %}
                 <span class="welcome-message">Welcome, {{ user.username }}</span>
@@ -39,21 +42,9 @@
             {% else %}
                 <a href="#" class="login-btn">Log in</a>
                 <a href="#" class="signup-btn">Sign up</a>
-                <a href="#" class="settings-icon">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/settings.png" alt="Settings">
-                </a>
             {% endif %}
-        </div>
+        </div>        
     </nav>
-
-    <!-- Messages -->
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 
     <!-- Article content section: Default state -->
     <div class="article-content-default">
@@ -201,6 +192,35 @@
         </div>
     </div>
 
+    <div class="overlay" id="overlay" style="display: none;"></div>
+
+    <div class="manage-users-modal" id="manageUsersModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage User Accounts</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="manage-users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Users will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        
+
+
     <!-- Embed the articles JSON data in a <script> tag -->
     <script id="articlesData" type="application/json">
         {{ articles_json|safe }}
@@ -208,6 +228,18 @@
     <script>
         const showLoginModal = "{{ show_login_modal|default:'False'|lower }}" === "true";
         const showSignupModal = "{{ show_signup_modal|default:'False'|lower }}" === "true";
+    </script>
+    <script>
+        function toggleManageUsersModal(show) {
+            const modal = document.getElementById("manageUsersModal");
+            modal.style.display = show ? "block" : "none";
+        }
+    
+        // Add event listener for the settings icon
+        document.querySelector(".settings-icon").addEventListener("click", (e) => {
+            e.preventDefault();
+            toggleManageUsersModal(true);
+        });
     </script>
 </body>
 </html>

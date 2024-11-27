@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
-from django.contrib import messages
 import json
 from .models import Article
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
+from django.db.models import Prefetch
 
 def index(request):
     # Fetch all articles and their related categories
@@ -19,7 +19,12 @@ def index(request):
     # Serialize the articles data to JSON
     articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
 
-    return render(request, 'knowl/base.html', {'articles_json': articles_json})
+    # Pass authentication state to the template
+    context = {
+        'articles_json': articles_json,
+        'user_authenticated': request.user.is_authenticated,
+    }
+    return render(request, 'knowl/base.html', context)
 
 @csrf_protect
 def add_article(request):
@@ -53,7 +58,6 @@ def user_login(request):
         if user is not None:
             # Log the user in
             login(request, user)
-            messages.success(request, 'Logged in successfully!')
             return redirect('index')
         else:
             # Return an 'invalid login' error message.
@@ -114,7 +118,6 @@ def signup(request):
             student_group, created = Group.objects.get_or_create(name='Student')
             user.groups.add(student_group)
             login(request, user)
-            messages.success(request, 'Signup successful!')
             return redirect('index')
         except Exception as e:
             signup_error = 'An error occurred during signup.'
@@ -134,5 +137,22 @@ def signup(request):
 
 def user_logout(request):
     logout(request)
-    messages.success(request, 'Logged out successfully!')
     return redirect('index')
+
+def fetch_users(request):
+    # Check user permissions
+    if not request.user.is_authenticated:
+        print("User is not authenticated")
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+
+    if not request.user.groups.filter(name="Admin").exists():
+        print(f"User {request.user.username} is not an admin")
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+
+    try:
+        users = User.objects.all().values("id", "username", "email", "groups__name")
+        print(f"Fetched users: {list(users)}")  # Debugging
+        return JsonResponse(list(users), safe=False)
+    except Exception as e:
+        print(f"Error fetching users: {e}")  # Debugging
+        return JsonResponse({"error": "Server error"}, status=500)

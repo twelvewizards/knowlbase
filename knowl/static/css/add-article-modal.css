@@ -1,3 +1,4 @@
+/* Dark overlay styling for dimming the background */
 .overlay {
     display: none;
     position: fixed;
@@ -5,24 +6,30 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 1000; /* Above other content */
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Smooth fade-in effect */
 }
 
+/* Add Article Modal */
 .add-article-modal {
-    display: none;
+    display: none; /* Hidden by default */
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
+    background-color: white; /* Modal background color */
     border-radius: 12px;
-    width: 1100px;
+    width: 1100px; /* Set the width for the modal */
     padding: 24px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15); /* Subtle shadow for a pop-out effect */
+    z-index: 1001; /* Above overlay */
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth entrance */
 }
 
+/* Modal Header */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -32,7 +39,8 @@
 
 .modal-header h2 {
     font-size: 18px;
-    color: #333;
+    font-weight: bold;
+    color: #333; /* Dark gray for the title */
     margin: 0;
 }
 
@@ -41,27 +49,30 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
-    color: #666;
+    color: #666; /* Light gray */
     padding: 0;
 }
 
+/* Add Article Form */
 .add-article-form {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 40px;
+    grid-template-columns: 1.2fr 0.8fr; /* Larger text area column */
+    gap: 40px; /* Space between columns */
 }
 
 .article-text-area {
     width: 100%;
-    height: 500px;
+    height: 500px; /* Larger text area for writing */
     padding: 16px;
     background-color: #e0e0e0;
     border: none;
     border-radius: 8px;
     resize: none;
     font-size: 14px;
+    color: #333; /* Text color */
 }
 
+/* Article Details Section */
 .article-details {
     display: flex;
     flex-direction: column;
@@ -81,6 +92,7 @@
     gap: 16px;
 }
 
+/* Input and Select Styles */
 select,
 input {
     width: 100%;
@@ -92,7 +104,7 @@ input {
 }
 
 select {
-    appearance: none;
+    appearance: none; /* Remove default browser styling */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
@@ -102,7 +114,7 @@ select {
 select:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; /* Lighter gray for disabled */
 }
 
 select:not(:disabled) {
@@ -111,13 +123,14 @@ select:not(:disabled) {
 
 input[name="known_for"],
 input[name="notable_work"] {
-    height: 90px;
+    height: 90px; /* Larger input for specific fields */
     margin: 8px 0;
 }
 
+/* Inline Fields */
 .inline-fields {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
     gap: 12px;
     margin: 8px 0;
 }
@@ -126,9 +139,10 @@ input[name="notable_work"] {
     background-color: #e0e0e0;
 }
 
+/* Bottom Fields */
 .bottom-fields {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
     gap: 12px;
     margin: 8px 0;
 }
@@ -137,6 +151,7 @@ input[name="notable_work"] {
     background-color: #e0e0e0;
 }
 
+/* Publish Button */
 .publish-btn {
     background-color: #333;
     color: white;
@@ -145,15 +160,22 @@ input[name="notable_work"] {
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    align-self: flex-end;
+    font-weight: bold;
+    align-self: flex-end; /* Align to the right */
     margin-top: 16px;
+    transition: background-color 0.3s ease;
 }
 
+.publish-btn:hover {
+    background-color: #555; /* Darker gray on hover */
+}
+
+/* Placeholder Styles */
 ::placeholder {
-    color: #666;
+    color: #666; /* Light gray for placeholder */
 }
 
-/* Category specific spacing */
+/* Category Specific Spacing */
 input[name="title"] {
     margin-bottom: 8px;
 }
@@ -182,7 +204,7 @@ input[name="notable_work"] {
     margin: 8px 0;
 }
 
-/* Arts category specific styles */
+/* Arts Category Specific Styles */
 [data-category="Arts"] .fields-container {
     gap: 16px;
 }
@@ -199,16 +221,3 @@ input[name="notable_work"] {
 [data-category="Arts"] .bottom-fields {
     margin: 8px 0;
 }
-
-.publish-btn {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 12px 32px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    align-self: flex-end;
-    margin-top: 16px;
-}
- 

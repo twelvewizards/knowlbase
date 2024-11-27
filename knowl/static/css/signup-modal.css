@@ -38,13 +38,15 @@
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 10px;
+    color: #000; /* Explicitly set text color to black */
 }
 
 .modal-content p {
     font-size: 14px;
-    color: #888;
+    color: #666; /* Adjust for contrast, lighter gray */
     margin-bottom: 20px;
 }
+
 
 /* Form input styling */
 .input-group {
