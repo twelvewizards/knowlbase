@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
         manageUsersTableBody: document.querySelector(".manage-users-table tbody"),
         settingsIcon: document.querySelector(".settings-icon"),
         closeManageUsersBtn: document.querySelector(".manage-users-modal .close-button"),
+        addArticleModal: document.getElementById('addArticleModal'),
+        closeAddArticleModal: document.querySelector('.add-article-modal .close-button'),
+        openAddArticleButton: document.querySelector('.add-new'),
         body: document.body, // To check user authentication
     };
 
@@ -22,19 +25,18 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!value) console.warn(`${key} is missing in the DOM. This might be expected based on the user's login state.`);
     });
 
-    // Functions to open and close modals
+    // Function to open a modal
     const openModal = (modal) => {
         elements.overlay.style.display = 'block';
-        setTimeout(() => {
-            elements.overlay.style.opacity = '1';
-        }, 10);
         modal.style.display = 'block';
         setTimeout(() => {
+            elements.overlay.style.opacity = '1';
             modal.style.opacity = '1';
             modal.style.transform = 'translate(-50%, -50%) scale(1)';
         }, 10);
     };
 
+    // Function to close a modal
     const closeModal = (modal) => {
         elements.overlay.style.opacity = '0';
         modal.style.opacity = '0';
@@ -46,19 +48,19 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Open Login Modal
-    elements.loginBtn?.addEventListener('click', function (e) {
+    elements.loginBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         openModal(elements.loginModal);
     });
 
     // Open Sign-Up Modal
-    elements.signupBtn?.addEventListener('click', function (e) {
+    elements.signupBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         openModal(elements.signupModal);
     });
 
     // Link from Login to Sign-Up Modal
-    elements.openSignupLink?.addEventListener('click', function (e) {
+    elements.openSignupLink?.addEventListener('click', (e) => {
         e.preventDefault();
         closeModal(elements.loginModal);
         setTimeout(() => {
@@ -67,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Link from Sign-Up to Login Modal
-    elements.openLoginLink?.addEventListener('click', function (e) {
+    elements.openLoginLink?.addEventListener('click', (e) => {
         e.preventDefault();
         closeModal(elements.signupModal);
         setTimeout(() => {
@@ -76,15 +78,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Close modals when overlay is clicked
-    elements.overlay?.addEventListener('click', function () {
-        closeModal(elements.loginModal);
-        closeModal(elements.signupModal);
-        closeModal(elements.manageUsersModal);
+    elements.overlay?.addEventListener('click', () => {
+        [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal].forEach((modal) => closeModal(modal));
     });
 
     // Function to fetch users from the server
     const fetchUsers = async () => {
-        console.log("Fetching users...");
         try {
             const response = await fetch("/fetch-users/");
             if (!response.ok) {
@@ -92,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error("Failed to fetch users");
             }
             const users = await response.json();
-            console.log("Fetched users:", users);
 
             // Clear existing rows
             elements.manageUsersTableBody.innerHTML = "";
@@ -104,36 +102,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-           // Populate table with user data
-           users.forEach(user => {
-            const row = document.createElement("tr");
-        
-            row.innerHTML = `
-                <td>${user.id}</td>
-                <td>${user.username}</td>
-                <td>${user.email}</td>
-                <td>${user.groups__name || "No Group"}</td>
-                <td class="action-cell">
-                    <button class="action-button edit-btn" title="Edit">
-                        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="Edit Icon">
-                    </button>
-                    <button class="action-button delete-btn" title="Delete">
-                        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/trash--v1.png" alt="Delete Icon">
-                    </button>
-                </td>
-            `;
-            elements.manageUsersTableBody.appendChild(row);
-        });
-        
-
+            // Populate table with user data
+            users.forEach(user => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.groups__name || "No Group"}</td>
+                    <td class="action-cell">
+                        <button class="action-button edit-btn" title="Edit">
+                            <img src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="Edit Icon">
+                        </button>
+                        <button class="action-button delete-btn" title="Delete">
+                            <img src="https://img.icons8.com/ios-glyphs/30/ffffff/trash--v1.png" alt="Delete Icon">
+                        </button>
+                    </td>
+                `;
+                elements.manageUsersTableBody.appendChild(row);
+            });
         } catch (error) {
             console.error("Error in fetchUsers:", error);
         }
     };
 
-    // Open modal and fetch users
+    // Open Add Article Modal
+    elements.openAddArticleButton?.addEventListener('click', () => {
+        openModal(elements.addArticleModal);
+    });
+
+    // Close Add Article Modal
+    elements.closeAddArticleModal?.addEventListener('click', () => {
+        closeModal(elements.addArticleModal);
+    });
+
+    // Open Manage Users Modal and fetch users
     elements.settingsIcon?.addEventListener("click", () => {
-        console.log("Settings icon clicked. Opening modal.");
         openModal(elements.manageUsersModal);
 
         // Check if user is authenticated
@@ -144,9 +148,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Close modal when close button is clicked
+    // Close Manage Users Modal when close button is clicked
     elements.closeManageUsersBtn?.addEventListener("click", () => {
-        console.log("Close button clicked. Closing modal.");
         closeModal(elements.manageUsersModal);
     });
 
