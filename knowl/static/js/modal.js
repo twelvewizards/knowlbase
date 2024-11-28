@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         userEmailDisplay: document.getElementById('userEmail'),
         confirmRemoveBtn: document.getElementById('confirmRemoveUser'),
         cancelRemoveBtn: document.getElementById('cancelRemoveUser'),
-        mainContent: document.querySelector('.main-content'), // The specific content to blur
+        mainContent: document.querySelector('.main-content'),
         body: document.body,
     };
 
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <button class="action-button edit-btn" title="Edit">
                             <img src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="Edit Icon">
                         </button>
-                        <button class="action-button delete-btn" title="Delete">
+                        <button class="action-button delete-btn" data-user-id="${user.id}" title="Delete">
                             <img src="https://img.icons8.com/ios-glyphs/30/ffffff/trash--v1.png" alt="Delete Icon">
                         </button>
                     </td>
@@ -133,8 +133,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event delegation for dynamically added delete buttons
     elements.manageUsersTableBody.addEventListener('click', (e) => {
         if (e.target.closest('.delete-btn')) {
-            const userRow = e.target.closest("tr"); // Find the corresponding row
-            const email = userRow.querySelector("td:nth-child(2)").textContent; // Get the email
+            const deleteBtn = e.target.closest('.delete-btn');
+            const email = deleteBtn.closest("tr").querySelector("td:nth-child(2)").textContent;
+            const userId = deleteBtn.dataset.userId;
+            elements.userEmailDisplay.textContent = email;
+            elements.userEmailDisplay.dataset.userId = userId;
             openRemoveUserModal(email);
         }
     });
@@ -152,8 +155,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Open Manage Users Modal and fetch users
     elements.settingsIcon?.addEventListener('click', () => {
         openModal(elements.manageUsersModal);
-
-        // Check if user is authenticated
         if (userAuthenticated) {
             fetchUsers();
         } else {
@@ -166,64 +167,61 @@ document.addEventListener('DOMContentLoaded', function () {
         closeModal(elements.manageUsersModal);
     });
 
-    // Open modals based on server-side variables
-    if (typeof showLoginModal !== 'undefined' && showLoginModal) {
-        openModal(elements.loginModal);
-    }
-
-    if (typeof showSignupModal !== 'undefined' && showSignupModal) {
-        openModal(elements.signupModal);
-    }
-
     // Open Remove User Modal
     const openRemoveUserModal = (email) => {
         elements.userEmailDisplay.textContent = email;
-        elements.manageUsersModal.classList.add('dimmed'); // Dim the Manage Users Modal
-        openModal(elements.removeUserModal, false); // Open Remove User Modal without affecting Main Content
+        elements.manageUsersModal.classList.add('dimmed');
+        openModal(elements.removeUserModal, false);
     };
-
 
     // Close Remove User Modal
     const closeRemoveUserModal = () => {
-        closeModal(elements.removeUserModal, false); // Close Remove User Modal only
-        elements.manageUsersModal.classList.remove('dimmed'); // Remove dim effect from Manage Users Modal
+        closeModal(elements.removeUserModal, false);
+        elements.manageUsersModal.classList.remove('dimmed');
     };
 
-      // Attach event listeners
-      elements.cancelRemoveBtn.addEventListener('click', closeRemoveUserModal);
-      elements.confirmRemoveBtn.addEventListener('click', () => {
-          console.log('User removal confirmed:', elements.userEmailDisplay.textContent);
-          closeRemoveUserModal();
-      });
-      
-        // Simulate opening the Remove User Modal
-        document.querySelector('.manage-users-table').addEventListener('click', (event) => {
-            if (event.target.closest('.delete-btn')) {
-                const email = event.target.closest('tr').querySelector('td:nth-child(2)').textContent;
-                openRemoveUserModal(email);
-            }
+    // Attach Cancel Button Event
+    elements.cancelRemoveBtn?.addEventListener('click', closeRemoveUserModal);
+
+    // Attach Confirm Button Event with debugging and proper functionality
+elements.confirmRemoveBtn?.addEventListener('click', async () => {
+    const userId = elements.userEmailDisplay.dataset.userId;
+    if (!userId) {
+        console.error("DEBUG: User ID not found in the modal.");
+        return; // No alert, just log the issue
+    }
+
+    try {
+        console.log(`DEBUG: Sending request to delete user with ID ${userId}`);
+        const response = await fetch("/delete-user/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCsrfToken(),
+            },
+            body: new URLSearchParams({ user_id: userId }),
         });
 
-    // Confirm Remove Action
-    elements.confirmRemoveBtn.addEventListener('click', () => {
-        console.log('User removal confirmed for:', elements.userEmailDisplay.textContent);
-        closeRemoveUserModal();
-    });
-    
-    // Cancel Remove Action
-    elements.cancelRemoveBtn.addEventListener('click', () => {
-        closeRemoveUserModal();
-    });
-
-    // Event listener for confirm button (non-functional for now)
-    confirmRemoveBtn.addEventListener("click", () => {
-        console.log("User removal confirmed for:", userEmailDisplay.textContent);
-        closeRemoveUserModal();
-    });
-
-    // Close modal when clicking outside
-    overlay.addEventListener("click", closeRemoveUserModal);
+        const result = await response.json();
+        if (response.ok && result.status === "success") {
+            console.log(`DEBUG: User deleted successfully. Message: ${result.message}`);
+            closeRemoveUserModal();
+            fetchUsers(); // Refresh the user list
+        } else {
+            console.error(`DEBUG: Failed to delete user. Message: ${result.message}`);
+        }
+    } catch (error) {
+        console.error(`DEBUG: Error removing user: ${error}`);
+    }
 });
 
 
+    // Helper: Get CSRF Token
+    const getCsrfToken = () => {
+        const csrfCookie = document.cookie.split("; ").find((row) => row.startsWith("csrftoken="));
+        return csrfCookie ? csrfCookie.split("=")[1] : null;
+    };
 
+    // Initial Fetch Users
+    fetchUsers();
+});

@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.serializers.json import DjangoJSONEncoder
 import json
 from .models import Article
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect
-from django.db.models import Prefetch
 
 def index(request):
     # Fetch all articles and their related categories
@@ -20,10 +20,14 @@ def index(request):
     articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
 
     # Determine the user's role
+    user_role = None
     if request.user.is_authenticated:
-        user_role = request.user.groups.first().name if request.user.groups.exists() else "Guest"
-    else:
-        user_role = "Guest"
+        if request.user.groups.filter(name="Admin").exists():
+            user_role = "Admin"
+        elif request.user.groups.filter(name="Tutor").exists():
+            user_role = "Tutor"
+        else:
+            user_role = "Student"
 
     # Pass authentication state and user role to the template
     context = {
@@ -32,6 +36,7 @@ def index(request):
         'user_role': user_role,
     }
     return render(request, 'knowl/base.html', context)
+
 
 @csrf_protect
 def add_article(request):
@@ -69,7 +74,6 @@ def user_login(request):
         else:
             # Return an 'invalid login' error message.
             login_error = 'Invalid username or password.'
-            # Fetch articles data
             articles = list(Article.objects.values(
                 'title', 'born', 'died', 'nationality', 'developer',
                 'known_for', 'notable_work', 'location', 'about',
@@ -146,20 +150,40 @@ def user_logout(request):
     logout(request)
     return redirect('index')
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="/", redirect_field_name=None)
 def fetch_users(request):
-    # Check user permissions
-    if not request.user.is_authenticated:
-        print("User is not authenticated")
-        return JsonResponse({"error": "Unauthorized"}, status=403)
-
-    if not request.user.groups.filter(name="Admin").exists():
-        print(f"User {request.user.username} is not an admin")
-        return JsonResponse({"error": "Unauthorized"}, status=403)
-
     try:
         users = User.objects.all().values("id", "username", "email", "groups__name")
-        print(f"Fetched users: {list(users)}")  # Debugging
         return JsonResponse(list(users), safe=False)
     except Exception as e:
-        print(f"Error fetching users: {e}")  # Debugging
-        return JsonResponse({"error": "Server error"}, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="/", redirect_field_name=None)
+@csrf_exempt
+def delete_user(request):
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        if not user_id:
+            print("DEBUG: No user_id provided in the request.")  # Debugging
+            return JsonResponse({"status": "error", "message": "User ID not provided."}, status=400)
+
+        try:
+            user = User.objects.get(id=user_id)
+            print(f"DEBUG: Attempting to delete user: {user.username} (ID: {user_id})")  # Debugging
+            if user.is_superuser:
+                print("DEBUG: Cannot delete superuser.")  # Debugging
+                return JsonResponse({"status": "error", "message": "Cannot delete superuser."}, status=403)
+            user.delete()
+            print(f"DEBUG: Successfully deleted user with ID {user_id}.")  # Debugging
+            return JsonResponse({"status": "success", "message": "User deleted successfully."})
+        except User.DoesNotExist:
+            print(f"DEBUG: User with ID {user_id} not found.")  # Debugging
+            return JsonResponse({"status": "error", "message": "User not found."}, status=404)
+        except Exception as e:
+            print(f"DEBUG: Exception occurred: {str(e)}")  # Debugging
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    print("DEBUG: Invalid request method.")  # Debugging
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
