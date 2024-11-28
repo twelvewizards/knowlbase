@@ -167,6 +167,46 @@ document.addEventListener('DOMContentLoaded', function () {
         closeModal(elements.manageUsersModal);
     });
 
+    // Open Edit User Modal
+    const openEditUserModal = (email, role) => {
+        const editUserModal = document.getElementById('editUserModal');
+        const editUserName = document.getElementById('editUserName');
+        const editUserGroup = document.getElementById('editUserGroup');
+
+        // Populate fields
+        editUserName.value = email;
+        editUserGroup.value = role;
+
+        // Add dim effect to Manage Users Modal
+        elements.manageUsersModal.classList.add('dimmed');
+        openModal(editUserModal, false); // Open Edit User Modal without affecting Main Content
+    };
+
+    // Close Edit User Modal
+    const closeEditUserModal = () => {
+        const editUserModal = document.getElementById('editUserModal');
+        closeModal(editUserModal, false); // Close Edit User Modal only
+
+        // Remove dim effect from Manage Users Modal
+        elements.manageUsersModal.classList.remove('dimmed');
+    };
+
+    // Attach Cancel Button Event for Edit User Modal
+    document.getElementById('cancelEditUser').addEventListener('click', closeEditUserModal);
+
+    // Add event listener to Edit buttons
+    elements.manageUsersTableBody.addEventListener('click', (e) => {
+        if (e.target.closest('.edit-btn')) {
+            const editBtn = e.target.closest('.edit-btn');
+            const email = editBtn.closest('tr').querySelector('td:nth-child(2)').textContent;
+            const role = editBtn.closest('tr').querySelector('td:nth-child(3)').textContent;
+            openEditUserModal(email, role); // Open Edit User Modal with prefilled data
+        }
+    });
+
+
+
+
     // Open Remove User Modal
     const openRemoveUserModal = (email) => {
         elements.userEmailDisplay.textContent = email;

@@ -228,6 +228,31 @@
         </div>
     </div>
 
+    
+    <!-- Edit User Modal -->
+<div class="edit-user-modal" id="editUserModal">
+    <div class="modal-header">
+        <h2>Edit User</h2>
+    </div>
+    <div class="modal-body">
+        <form id="editUserForm">
+            <label for="editUserName">Email:</label>
+            <input type="text" id="editUserName" name="username" readonly />
+            <label for="editUserGroup">Role:</label>
+            <select id="editUserGroup" name="group">
+                <option value="Admin">Admin</option>
+                <option value="Tutor">Tutor</option>
+                <option value="Student">Student</option>
+            </select>
+        </form>
+    </div>
+    <div class="modal-buttons">
+        <button class="confirm-btn" id="confirmEditUser">Save Changes</button>
+        <button class="cancel-btn" id="cancelEditUser">Cancel</button>
+    </div>
+</div>
+
+
     <!-- Remove User Modal -->
     <div class="remove-user-modal" id="removeUserModal">
         <div class="modal-header">
