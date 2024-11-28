@@ -26,79 +26,91 @@
     <script defer src="{% static 'js/add-article.js' %}"></script>
 </head>
 <body>
-    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" data-authenticated="{{ user_authenticated }}">
-        <nav class="navbar">
-            <div class="navbar-left">
-                <a href="{% url 'index' %}" class="logo">KnowlBase</a> <!-- Make the KnowlBase text clickable -->
-                <a href="#" class="nav-link">Home</a>
-            </div>
-        <div class="navbar-right">
-            {% if user.is_authenticated %}
-                <span class="welcome-message">Welcome, {{ user.username }}</span>
-                <a href="{% url 'user_logout' %}" class="logout-btn">Log out</a>
-                <a href="#" class="settings-icon">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/settings.png" alt="Settings">
-                </a>
-            {% else %}
-                <a href="#" class="login-btn">Log in</a>
-                <a href="#" class="signup-btn">Sign up</a>
-            {% endif %}
-        </div>        
-    </nav>
-
-    <!-- Article content section: Default state -->
-    <div class="article-content-default">
-        <p>Click an article to view its contents</p>
-    </div>
-
-    <!-- Dropdown arrow and rectangle container -->
-    <div class="dropdown-container">
-        <div class="horizontal-line"></div>
-        <div class="dropdown-rectangle">
-            <div class="dropdown-arrow"></div>
+    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" 
+      data-authenticated="{{ user_authenticated }}" 
+      data-role="{{ user_role }}">
+        <div class="page-wrapper">
+            <header>
+                <nav class="navbar">
+                    <div class="navbar-left">
+                        <a href="{% url 'index' %}" class="logo">KnowlBase</a>
+                        <a href="#" class="nav-link">Home</a>
+                    </div>
+                    <div class="navbar-right">
+                        {% if user.is_authenticated %}
+                            <span class="welcome-message">Welcome, {{ user.username }}</span>
+                            <a href="{% url 'user_logout' %}" class="logout-btn">Log out</a>
+                            {% if user_role in "Admin,Tutor" %}
+                                <a href="#" class="settings-icon">
+                                    <img src="https://img.icons8.com/ios-filled/50/ffffff/settings.png" alt="Settings">
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="#" class="login-btn">Log in</a>
+                            <a href="#" class="signup-btn">Sign up</a>
+                        {% endif %}
+                    </div>
+                </nav>
+            </header>
+        
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Article content section -->
+                <div class="article-content-default">
+                    <p>Click an article to view its contents</p>
+                </div>
+        
+                <!-- Dropdown container -->
+                <div class="dropdown-container">
+                    <div class="horizontal-line"></div>
+                    <div class="dropdown-rectangle">
+                        <div class="dropdown-arrow"></div>
+                    </div>
+                </div>
+        
+                <!-- Filter and search -->
+                <div class="filter-section">
+                    <div class="filter-components">
+                        <div class="category-filters">
+                            <label class="filter-option art">
+                                <input type="radio" name="category-art" checked />
+                                <span>Art</span>
+                            </label>
+                            <label class="filter-option mathematics">
+                                <input type="radio" name="category-math" checked />
+                                <span>Mathematics</span>
+                            </label>
+                            <label class="filter-option technology">
+                                <input type="radio" name="category-tech" checked />
+                                <span>Technology</span>
+                            </label>
+                        </div>
+                    </div>
+        
+                    <!-- Search bar -->
+                    <div class="search-container">
+                        <input type="text" class="search-bar" placeholder="Search...">
+                        <button class="search-btn">
+                            <img src="https://img.icons8.com/ios-filled/24/000000/search.png" alt="Search Icon">
+                        </button>
+                    </div>
+                </div>
+        
+                <!-- Articles -->
+                <div class="article-buttons-container">
+                    {% for article in articles %}
+                        <button class="article-button 
+                            {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% else %}default{% endif %}">
+                            {{ article.title }}
+                        </button>
+                    {% endfor %}
+                    {% if user.is_authenticated %}
+                        <button class="article-button add-new">+ Add new</button>
+                    {% endif %}
+                </div>
+            </main>
         </div>
-    </div>
-
-    <!-- Filter and Search section -->
-    <div class="filter-section">
-        <div class="filter-components">
-            <div class="category-filters">
-                <label class="filter-option art">
-                    <input type="radio" name="category-art" checked />
-                    <span>Art</span>
-                </label>
-                <label class="filter-option mathematics">
-                    <input type="radio" name="category-math" checked />
-                    <span>Mathematics</span>
-                </label>
-                <label class="filter-option technology">
-                    <input type="radio" name="category-tech" checked />
-                    <span>Technology</span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Search bar section -->
-        <div class="search-container">
-            <input type="text" class="search-bar" placeholder="Search...">
-            <button class="search-btn">
-                <img src="https://img.icons8.com/ios-filled/24/000000/search.png" alt="Search Icon">
-            </button>
-        </div>
-    </div>
-
-    <!-- Article buttons section -->
-    <div class="article-buttons-container">
-        {% for article in articles %}
-            <button class="article-button 
-                {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% else %}default{% endif %}">
-                {{ article.title }}
-            </button>
-        {% endfor %}
-        {% if user.is_authenticated %}
-            <button class="article-button add-new">+ Add new</button>
-        {% endif %}
-    </div>
+        
 
     <div class="content">
         {% block content %}{% endblock %}
@@ -192,8 +204,8 @@
         </div>
     </div>
 
+    <!-- Manage Users Modal -->
     <div class="overlay" id="overlay" style="display: none;"></div>
-
     <div class="manage-users-modal" id="manageUsersModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -205,7 +217,6 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Username</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th>Actions</th>
@@ -218,6 +229,47 @@
             </div>
         </div>
     </div>
+
+    
+    <!-- Edit User Modal -->
+<div class="edit-user-modal" id="editUserModal">
+    <div class="modal-header">
+        <h2>Edit User</h2>
+    </div>
+    <div class="modal-body">
+        <form id="editUserForm">
+            <label for="editUserName">Email:</label>
+            <input type="email" id="editUserName" name="email" />            
+            <label for="editUserGroup">Role:</label>
+            <select id="editUserGroup" name="group">
+                <option value="Admin">Admin</option>
+                <option value="Tutor">Tutor</option>
+                <option value="Student">Student</option>
+            </select>
+        </form>
+    </div>
+    <div class="modal-buttons">
+        <button class="confirm-btn" id="confirmEditUser">Save Changes</button>
+        <button class="cancel-btn" id="cancelEditUser">Cancel</button>
+    </div>
+</div>
+
+
+    <!-- Remove User Modal -->
+    <div class="remove-user-modal" id="removeUserModal">
+        <div class="modal-header">
+            <h2>Remove User</h2>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove this user?</p>
+            <p><strong id="userEmail"></strong></p>
+        </div>
+        <div class="modal-buttons">
+            <button class="confirm-btn" id="confirmRemoveUser">Remove</button>
+            <button class="cancel-btn" id="cancelRemoveUser">Cancel</button>
+        </div>
+    </div>
+
         
 
 

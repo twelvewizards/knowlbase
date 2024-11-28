@@ -1,21 +1,29 @@
 /* Manage Users Modal */
 .manage-users-modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #1e1e1e; /* Dark background */
+    background-color: #1e1e1e;
     border-radius: 8px;
     padding: 20px;
-    width: 90%; /* Increase the width */
-    max-width: 1200px; /* Set a maximum width */
-    max-height: 80vh; /* Adjust to occupy more vertical space */
-    overflow: hidden; /* Hide overflow content */
+    width: 90%;
+    max-width: 1200px;
+    max-height: 80vh;
+    overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Above overlay */
+    z-index: 1000; /* Above overlay but below Remove User Modal */
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Manage Users Modal with dim effect */
+.manage-users-modal.dimmed {
+    filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.6); /* Dim background */
+    pointer-events: none; /* Prevent interaction */
+    transition: filter 0.3s ease, background-color 0.3s ease;
 }
 
 /* Header styling */
@@ -43,17 +51,43 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
+    table-layout: fixed; /* Ensures consistent column widths */
 }
 
-.manage-users-table th,
+/* Force equal column widths for consistent alignment */
+.manage-users-table th, 
 .manage-users-table td {
-    text-align: left;
     padding: 10px;
+    text-align: left;
+    vertical-align: middle; /* Center-align text vertically */
+    box-sizing: border-box;
+}
+
+/* Assign explicit widths for each column */
+.manage-users-table th:nth-child(1), 
+.manage-users-table td:nth-child(1) {
+    width: 10%; /* ID column */
+}
+
+.manage-users-table th:nth-child(2), 
+.manage-users-table td:nth-child(2) {
+    width: 40%; /* Email column */
+}
+
+.manage-users-table th:nth-child(3), 
+.manage-users-table td:nth-child(3) {
+    width: 30%; /* Role column */
+}
+
+.manage-users-table th:nth-child(4), 
+.manage-users-table td:nth-child(4) {
+    width: 20%; /* Actions column */
 }
 
 .manage-users-table th {
     background-color: #2b2b2b;
     color: white; /* Ensure header text is white */
+    text-align: left;
 }
 
 .manage-users-table tr:nth-child(even) {
@@ -73,8 +107,10 @@
     display: flex;
     justify-content: center;
     gap: 10px; /* Add space between the buttons */
+    align-items: center;
 }
 
+/* Button styles */
 .action-button {
     background: none;
     border: none;
@@ -89,8 +125,8 @@
 }
 
 .action-button img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     transition: transform 0.2s ease;
 }
 
@@ -119,4 +155,184 @@
 
 .action-button.delete-btn:hover img {
     filter: invert(50%) sepia(100%) saturate(3000%) hue-rotate(0deg) brightness(110%) contrast(120%);
+}
+
+/* Adjust colspan for no users message */
+.manage-users-table tbody tr td[colspan="4"] {
+    text-align: center;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Edit User Modal */
+.edit-user-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e; /* Dark background */
+    border-radius: 8px;
+    padding: 20px 30px;
+    width: 400px; /* Fixed width for the modal */
+    max-width: 90%; /* Adjust for smaller screens */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1100; /* Above Manage Users Modal */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Header for Edit User Modal */
+.edit-user-modal .modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+/* Edit User Modal Content */
+.edit-user-modal .modal-body {
+    color: white;
+    font-size: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit-user-modal input,
+.edit-user-modal select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #333;
+    color: white;
+    margin-bottom: 10px;
+}
+
+/* Modal Buttons */
+.edit-user-modal .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.edit-user-modal .modal-buttons button {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-user-modal .modal-buttons .confirm-btn {
+    background-color: #5cb85c; /* Green button for confirmation */
+    color: white;
+}
+
+.edit-user-modal .modal-buttons .confirm-btn:hover {
+    background-color: #4cae4c;
+}
+
+.edit-user-modal .modal-buttons .cancel-btn {
+    background-color: #d9534f; /* Red button for cancel */
+    color: white;
+}
+
+.edit-user-modal .modal-buttons .cancel-btn:hover {
+    background-color: #c9302c;
+}
+
+
+/* Remove User Modal */
+.remove-user-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 20px 30px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1100; /* Above Manage Users Modal */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Header for Remove User Modal */
+.remove-user-modal .modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+/* Remove User Modal Content */
+.remove-user-modal .modal-body {
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Modal Buttons */
+.remove-user-modal .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.remove-user-modal .modal-buttons button {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-user-modal .modal-buttons .confirm-btn {
+    background-color: #d9534f; /* Red button for confirmation */
+    color: white;
+}
+
+.remove-user-modal .modal-buttons .confirm-btn:hover {
+    background-color: #c9302c;
+}
+
+.remove-user-modal .modal-buttons .cancel-btn {
+    background-color: #5bc0de; /* Blue button for cancel */
+    color: white;
+}
+
+.remove-user-modal .modal-buttons .cancel-btn:hover {
+    background-color: #31b0d5;
+}
+
+/* Blur effect for main content when modal is active */
+.main-content.blur {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+    pointer-events: none; /* Disable interaction with blurred content */
+}
+/* Overlay for dim effect */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }

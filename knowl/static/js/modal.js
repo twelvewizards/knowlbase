@@ -8,27 +8,34 @@ document.addEventListener('DOMContentLoaded', function () {
         signupModal: document.getElementById('signupModal'),
         openSignupLink: document.querySelector('.open-signup-modal'),
         openLoginLink: document.querySelector('.open-login-modal'),
-        manageUsersModal: document.getElementById("manageUsersModal"),
-        manageUsersTableBody: document.querySelector(".manage-users-table tbody"),
-        settingsIcon: document.querySelector(".settings-icon"),
-        closeManageUsersBtn: document.querySelector(".manage-users-modal .close-button"),
+        manageUsersModal: document.getElementById('manageUsersModal'),
+        manageUsersTableBody: document.querySelector('.manage-users-table tbody'),
+        settingsIcon: document.querySelector('.settings-icon'),
+        closeManageUsersBtn: document.querySelector('.manage-users-modal .close-button'),
         addArticleModal: document.getElementById('addArticleModal'),
         closeAddArticleModal: document.querySelector('.add-article-modal .close-button'),
         openAddArticleButton: document.querySelector('.add-new'),
-        body: document.body, // To check user authentication
+        removeUserModal: document.getElementById('removeUserModal'),
+        userEmailDisplay: document.getElementById('userEmail'),
+        confirmRemoveBtn: document.getElementById('confirmRemoveUser'),
+        cancelRemoveBtn: document.getElementById('cancelRemoveUser'),
+        editUserModal: document.getElementById('editUserModal'),
+        editUserName: document.getElementById('editUserName'),
+        editUserGroup: document.getElementById('editUserGroup'),
+        confirmEditUser: document.getElementById('confirmEditUser'),
+        cancelEditUser: document.getElementById('cancelEditUser'),
+        newEmail: document.getElementById('newEmail'),
+        mainContent: document.querySelector('.main-content'),
+        body: document.body,
     };
 
-    const userAuthenticated = elements.body.dataset.authenticated === "True";
-
-    // Log missing elements for debugging
-    Object.entries(elements).forEach(([key, value]) => {
-        if (!value) console.warn(`${key} is missing in the DOM. This might be expected based on the user's login state.`);
-    });
+    const userAuthenticated = elements.body.dataset.authenticated === 'True';
 
     // Function to open a modal
-    const openModal = (modal) => {
+    const openModal = (modal, shouldBlurMain = true) => {
         elements.overlay.style.display = 'block';
         modal.style.display = 'block';
+        if (shouldBlurMain) elements.mainContent.classList.add('blur');
         setTimeout(() => {
             elements.overlay.style.opacity = '1';
             modal.style.opacity = '1';
@@ -37,13 +44,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Function to close a modal
-    const closeModal = (modal) => {
-        elements.overlay.style.opacity = '0';
+    const closeModal = (modal, removeBlurMain = true) => {
         modal.style.opacity = '0';
         modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
         setTimeout(() => {
-            elements.overlay.style.display = 'none';
             modal.style.display = 'none';
+            if (removeBlurMain) {
+                elements.overlay.style.opacity = '0';
+                elements.overlay.style.display = 'none';
+                elements.mainContent.classList.remove('blur');
+            }
         }, 300);
     };
 
@@ -62,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Link from Login to Sign-Up Modal
     elements.openSignupLink?.addEventListener('click', (e) => {
         e.preventDefault();
-        closeModal(elements.loginModal);
+        closeModal(elements.loginModal, false);
         setTimeout(() => {
             openModal(elements.signupModal);
         }, 300);
@@ -71,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Link from Sign-Up to Login Modal
     elements.openLoginLink?.addEventListener('click', (e) => {
         e.preventDefault();
-        closeModal(elements.signupModal);
+        closeModal(elements.signupModal, false);
         setTimeout(() => {
             openModal(elements.loginModal);
         }, 300);
@@ -79,42 +89,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close modals when overlay is clicked
     elements.overlay?.addEventListener('click', () => {
-        [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal].forEach((modal) => closeModal(modal));
+        const openModals = [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal, elements.removeUserModal, elements.editUserModal];
+        openModals.forEach((modal) => {
+            if (modal.style.display === 'block') closeModal(modal);
+        });
     });
 
     // Function to fetch users from the server
     const fetchUsers = async () => {
         try {
-            const response = await fetch("/fetch-users/");
+            const response = await fetch('/fetch-users/');
             if (!response.ok) {
-                console.error(`Failed to fetch users: ${response.status} ${response.statusText}`);
-                throw new Error("Failed to fetch users");
+                const errorText = await response.text();
+                console.error(`Failed to fetch users. Response: ${errorText}`);
+                throw new Error('Failed to fetch users');
             }
             const users = await response.json();
-
-            // Clear existing rows
-            elements.manageUsersTableBody.innerHTML = "";
-
+            elements.manageUsersTableBody.innerHTML = ''; // Clear existing rows
+    
             if (users.length === 0) {
-                const row = document.createElement("tr");
-                row.innerHTML = `<td colspan="5">No users found</td>`;
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4">No users found</td>`;
                 elements.manageUsersTableBody.appendChild(row);
                 return;
             }
-
-            // Populate table with user data
-            users.forEach(user => {
-                const row = document.createElement("tr");
+    
+            users.forEach((user) => {
+                const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${user.id}</td>
-                    <td>${user.username}</td>
                     <td>${user.email}</td>
-                    <td>${user.groups__name || "No Group"}</td>
+                    <td>${user.groups__name || 'No Group'}</td>
                     <td class="action-cell">
                         <button class="action-button edit-btn" title="Edit">
                             <img src="https://img.icons8.com/ios-glyphs/30/ffffff/edit--v1.png" alt="Edit Icon">
                         </button>
-                        <button class="action-button delete-btn" title="Delete">
+                        <button class="action-button delete-btn" data-user-id="${user.id}" title="Delete">
                             <img src="https://img.icons8.com/ios-glyphs/30/ffffff/trash--v1.png" alt="Delete Icon">
                         </button>
                     </td>
@@ -122,9 +132,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 elements.manageUsersTableBody.appendChild(row);
             });
         } catch (error) {
-            console.error("Error in fetchUsers:", error);
+            console.error('Error in fetchUsers:', error);
         }
     };
+    
+
+    // Event delegation for dynamically added delete buttons
+    elements.manageUsersTableBody.addEventListener('click', (e) => {
+        // Handle Delete Button
+        if (e.target.closest('.delete-btn')) {
+            const deleteBtn = e.target.closest('.delete-btn');
+            const email = deleteBtn.closest("tr").querySelector("td:nth-child(2)").textContent;
+            const userId = deleteBtn.dataset.userId;
+            elements.userEmailDisplay.textContent = email;
+            elements.userEmailDisplay.dataset.userId = userId;
+            openRemoveUserModal(email);
+        }
+    
+        // Handle Edit Button
+        if (e.target.closest('.edit-btn')) {
+            const editBtn = e.target.closest('.edit-btn');
+            const row = editBtn.closest('tr');
+            const email = row.querySelector('td:nth-child(2)').textContent;
+            const role = row.querySelector('td:nth-child(3)').textContent;
+            const userId = row.querySelector('.delete-btn').dataset.userId; // Assume delete-btn contains user ID
+            openEditUserModal(email, role, userId);
+        }
+    });
 
     // Open Add Article Modal
     elements.openAddArticleButton?.addEventListener('click', () => {
@@ -137,14 +171,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Open Manage Users Modal and fetch users
-    elements.settingsIcon?.addEventListener("click", () => {
+    elements.settingsIcon?.addEventListener('click', () => {
         openModal(elements.manageUsersModal);
-
-        // Check if user is authenticated
         if (userAuthenticated) {
             fetchUsers();
         } else {
-            console.warn("User is not authenticated. Fetching users is disabled.");
+            console.warn('User is not authenticated. Fetching users is disabled.');
         }
     });
 
@@ -153,12 +185,142 @@ document.addEventListener('DOMContentLoaded', function () {
         closeModal(elements.manageUsersModal);
     });
 
-    // Open modals based on server-side variables
-    if (typeof showLoginModal !== 'undefined' && showLoginModal) {
-        openModal(elements.loginModal);
-    }
+    // Open Edit User Modal
+    const openEditUserModal = (email, role, userId) => {
+        elements.editUserName.value = email;
+        elements.editUserGroup.innerHTML = ""; // Clear existing options
+    
+        // Determine role options based on the current user's role
+        const currentUserRole = elements.body.dataset.role; // Assume role is passed as a data attribute
+        let roleOptions = ["Student"]; // Default option for all users
+    
+        if (currentUserRole === "Admin") {
+            roleOptions = ["Admin", "Tutor", "Student"];
+        } else if (currentUserRole === "Tutor") {
+            roleOptions = ["Tutor", "Student"];
+        }
+    
+        // Populate the dropdown
+        roleOptions.forEach((roleOption) => {
+            const option = document.createElement("option");
+            option.value = roleOption;
+            option.textContent = roleOption;
+            if (roleOption === role) option.selected = true;
+            elements.editUserGroup.appendChild(option);
+        });
+    
+        elements.editUserModal.dataset.userId = userId; // Store the userId in dataset
+        elements.manageUsersModal.classList.add("dimmed"); // Dim the Manage Users Modal
+        openModal(elements.editUserModal, false);
+    };
+    
 
-    if (typeof showSignupModal !== 'undefined' && showSignupModal) {
-        openModal(elements.signupModal);
-    }
+
+    // Close Edit User Modal
+    const closeEditUserModal = () => {
+        closeModal(elements.editUserModal, false);
+        elements.manageUsersModal.classList.remove('dimmed');
+    };
+
+    // Attach Cancel Button Event for Edit User Modal
+    elements.cancelEditUser.addEventListener('click', closeEditUserModal);
+
+    // Attach Save Changes Event
+    elements.confirmEditUser.addEventListener('click', async () => {
+        const userId = elements.editUserModal.dataset.userId;
+        const newEmail = elements.editUserName.value;
+        const newRole = elements.editUserGroup.value;
+    
+        if (!userId || !newEmail || !newRole) {
+            console.error("DEBUG: Missing required fields.");
+            return;
+        }
+    
+        try {
+            console.log(`DEBUG: Sending request to update user ID ${userId}`);
+            const response = await fetch("/update-user/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCsrfToken(),
+                },
+                body: JSON.stringify({ user_id: userId, email: newEmail, role: newRole }),
+            });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`DEBUG: Failed to update user. Response: ${errorText}`);
+                throw new Error(errorText);
+            }
+    
+            const result = await response.json();
+            if (result.status === "success") {
+                console.log(`DEBUG: User updated successfully. Message: ${result.message}`);
+                closeEditUserModal();
+                fetchUsers(); // Refresh the user list
+            } else {
+                console.error(`DEBUG: Failed to update user. Message: ${result.message}`);
+            }
+        } catch (error) {
+            console.error(`DEBUG: Error updating user: ${error}`);
+        }
+    });
+    
+
+    // Open Remove User Modal
+    const openRemoveUserModal = (email) => {
+        elements.userEmailDisplay.textContent = email;
+        elements.manageUsersModal.classList.add('dimmed');
+        openModal(elements.removeUserModal, false);
+    };
+
+    // Close Remove User Modal
+    const closeRemoveUserModal = () => {
+        closeModal(elements.removeUserModal, false);
+        elements.manageUsersModal.classList.remove('dimmed');
+    };
+
+    // Attach Cancel Button Event
+    elements.cancelRemoveBtn?.addEventListener('click', closeRemoveUserModal);
+
+    // Attach Confirm Button Event with debugging and proper functionality
+    elements.confirmRemoveBtn?.addEventListener('click', async () => {
+        const userId = elements.userEmailDisplay.dataset.userId;
+        if (!userId) {
+            console.error("DEBUG: User ID not found in the modal.");
+            return;
+        }
+
+        try {
+            console.log(`DEBUG: Sending request to delete user ID ${userId}`);
+            const response = await fetch("/delete-user/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCsrfToken(),
+                },
+                body: new URLSearchParams({ user_id: userId }),
+            });
+
+            const result = await response.json();
+            if (response.ok && result.status === "success") {
+                console.log(`DEBUG: User deleted successfully. Message: ${result.message}`);
+                closeRemoveUserModal();
+                fetchUsers();
+            } else {
+                console.error(`DEBUG: Failed to delete user. Message: ${result.message}`);
+            }
+        } catch (error) {
+            console.error(`DEBUG: Error removing user: ${error}`);
+        }
+    });
+
+    // Helper: Get CSRF Token
+    const getCsrfToken = () => {
+        const csrfCookie = document.cookie.split("; ").find((row) => row.startsWith("csrftoken="));
+        return csrfCookie ? csrfCookie.split("=")[1] : null;
+    };
+
+    // Initial Fetch Users
+    fetchUsers();
 });
