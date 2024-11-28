@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         editUserGroup: document.getElementById('editUserGroup'),
         confirmEditUser: document.getElementById('confirmEditUser'),
         cancelEditUser: document.getElementById('cancelEditUser'),
+        newEmail: document.getElementById('newEmail'),
         mainContent: document.querySelector('.main-content'),
         body: document.body,
     };
