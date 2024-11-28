@@ -19,10 +19,17 @@ def index(request):
     # Serialize the articles data to JSON
     articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
 
-    # Pass authentication state to the template
+    # Determine the user's role
+    if request.user.is_authenticated:
+        user_role = request.user.groups.first().name if request.user.groups.exists() else "Guest"
+    else:
+        user_role = "Guest"
+
+    # Pass authentication state and user role to the template
     context = {
         'articles_json': articles_json,
         'user_authenticated': request.user.is_authenticated,
+        'user_role': user_role,
     }
     return render(request, 'knowl/base.html', context)
 

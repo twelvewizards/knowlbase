@@ -1,2 +1,7 @@
 admin: knowlbaseadmin1@gmail.com
 admin password: adminpassword
+
+
+student: kingcool58@gmail.com
+student password: coolman
+
