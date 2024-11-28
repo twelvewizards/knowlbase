@@ -15,10 +15,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const activeCategories = { art: true, mathematics: true, technology: true };
 
+        // Function to check authentication status
+        function isAuthenticated() {
+            return document.body.dataset.authenticated === 'True';
+        }
+
+        // Set the default content message based on authentication status
+        function setDefaultContentMessage() {
+            if (isAuthenticated()) {
+                contentSection.innerHTML = '<p>Click an article to view its contents</p>';
+            } else {
+                contentSection.innerHTML = '<p>Sign up or log in to view article contents!</p>';
+            }
+        }
+
         function renderArticles() {
             articleButtonsContainer.innerHTML = '';
-
-            // Filter articles based on selected categories
             const filteredArticles = articlesData.filter(article => {
                 if (article.category_id === 1 && activeCategories.art) return true;
                 if (article.category_id === 2 && activeCategories.mathematics) return true;
@@ -26,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return false;
             });
 
-            // Create buttons for each article
             filteredArticles.forEach(article => {
                 const button = document.createElement('button');
                 button.className = 'article-button';
@@ -37,35 +48,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 articleButtonsContainer.appendChild(button);
 
-                // Add click event for article button
                 button.addEventListener('click', function () {
-                    console.log("Article Clicked:", article);
-                    contentSection.classList.remove('article-content-default');
-                    contentSection.classList.add('article-content-expanded');
-                    updateContentSection(article);
+                    if (!isAuthenticated()) {
+                        flashSignUpPrompt();
+                    } else {
+                        console.log("Article Clicked:", article);
+                        contentSection.classList.remove('article-content-default');
+                        contentSection.classList.add('article-content-expanded');
+                        updateContentSection(article);
+                    }
                 });
             });
+        }
 
-            // Add "Add New" button if user is authorized
-            const userAuthenticated = document.body.dataset.authenticated === 'True';
-            const userRole = document.body.dataset.role;
-
-            if (userAuthenticated && ['Admin', 'Tutor'].includes(userRole)) {
-                const addNewButton = document.createElement('button');
-                addNewButton.className = 'article-button add-new';
-                addNewButton.textContent = '+ Add new';
-                articleButtonsContainer.appendChild(addNewButton);
-
-                // Handle Add New button click
-                addNewButton.addEventListener('click', function () {
-                    console.log("Add New button clicked!");
-                    // Open add-article modal logic here
-                    const addArticleModal = document.getElementById('addArticleModal');
-                    const overlay = document.getElementById('overlay');
-                    overlay.style.display = 'block';
-                    addArticleModal.style.display = 'block';
-                });
-            }
+        function flashSignUpPrompt() {
+            contentSection.innerHTML = '<p class="flash-prompt">Sign up or log in to view article contents!</p>';
+            contentSection.classList.add('flash-effect');
+            setTimeout(() => {
+                contentSection.classList.remove('flash-effect');
+                setDefaultContentMessage();
+            }, 1000);
         }
 
         function updateContentSection(article) {
@@ -128,13 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (contentSection.classList.contains('article-content-expanded')) {
                 contentSection.classList.remove('article-content-expanded');
                 contentSection.classList.add('article-content-default');
-                contentSection.innerHTML = '<p>Click an article to view its contents</p>';
+                setDefaultContentMessage();
             }
         });
 
+        setDefaultContentMessage(); // Set the message on page load
         renderArticles();
 
-        // Filter buttons logic
         filterButtons.forEach(button => {
             button.addEventListener('click', function () {
                 if (button.name.includes('art')) {
@@ -151,6 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     } catch (error) {
-        console.error("Failed to parse articles data or initialize script:", error);
+        console.error("Failed to parse articles data:", error);
     }
 });
