@@ -15,7 +15,7 @@
 - Click Save.
   
 2. Import Database from SQL File:
-- Download the knowlbase.sql file. https://drive.google.com/file/d/1upt8Q6dp-hMZSwPp7V2rXxlm_er7jMdW/view?usp=sharing
+- Download the knowlbase.sql file. https://drive.google.com/file/d/1qZBGx02tHuhevHi9PZHV4j-eeezcjxk_/view?usp=sharing
 - Open Command Prompt and use the following command to import the data: psql -U postgres -h localhost -d KnowlBase -f "C:/path/to/KnowlBase.sql"
 Replace C:/path/to/KnowlBase.sql with the actual path to the downloaded knowlbase.sql file.
 This command will populate the KnowlBase database with initial data.
