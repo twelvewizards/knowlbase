@@ -9,6 +9,22 @@ import json
 from .models import Article
 
 def index(request):
+    # Initialize user_role
+    user_role = None
+
+    # Determine authentication and role
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name="Admin").exists():
+            user_role = "Admin"
+        elif request.user.groups.filter(name="Tutor").exists():
+            user_role = "Tutor"
+        else:
+            user_role = "Student"
+
+    # Debug prints after assignment
+    print(f"DEBUG: User authenticated: {request.user.is_authenticated}")
+    print(f"DEBUG: User role: {user_role}")
+
     # Fetch all articles and their related categories
     articles = list(Article.objects.values(
         'title', 'born', 'died', 'nationality', 'developer',
@@ -19,16 +35,6 @@ def index(request):
     # Serialize the articles data to JSON
     articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
 
-    # Determine the user's role
-    user_role = None
-    if request.user.is_authenticated:
-        if request.user.groups.filter(name="Admin").exists():
-            user_role = "Admin"
-        elif request.user.groups.filter(name="Tutor").exists():
-            user_role = "Tutor"
-        else:
-            user_role = "Student"
-
     # Pass authentication state and user role to the template
     context = {
         'articles_json': articles_json,
@@ -38,8 +44,12 @@ def index(request):
     return render(request, 'knowl/base.html', context)
 
 
+
 @csrf_protect
+@login_required(login_url='/')  # Redirect unauthenticated users
+@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists(), login_url='/', redirect_field_name=None)
 def add_article(request):
+    # Only authorized users can proceed
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -123,6 +133,7 @@ def signup(request):
             })
 
         try:
+            # Removed the extra 'f' here
             user = User.objects.create_user(username=email, email=email, password=password1)
             user.save()
             # Assign user to 'Student' group by default

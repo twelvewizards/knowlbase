@@ -104,10 +104,10 @@
                             {{ article.title }}
                         </button>
                     {% endfor %}
-                    {% if user.is_authenticated %}
+                    {% if user_authenticated and user_role in "Admin,Tutor" %}
                         <button class="article-button add-new">+ Add new</button>
                     {% endif %}
-                </div>
+                </div>                
             </main>
         </div>
         

@@ -109,7 +109,15 @@ document.addEventListener('DOMContentLoaded', function () {
     categorySelect.addEventListener('change', handleCategoryChange);
 
     // Modal open/close handlers
-    addNewBtn.addEventListener('click', function (e) {
+    addNewBtn?.addEventListener('click', function (e) {
+        const userAuthenticated = document.body.dataset.authenticated === 'True';
+        const userRole = document.body.dataset.role;
+
+        if (!userAuthenticated || !['Admin', 'Tutor'].includes(userRole)) {
+            console.warn("Unauthorized access attempt to Add Article modal.");
+            return;
+        }
+
         e.preventDefault();
         overlay.style.display = 'block';
         addArticleModal.style.display = 'block';
@@ -130,8 +138,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('addArticleForm').reset();
     }
 
-    closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', function (e) {
+    closeBtn?.addEventListener('click', closeModal);
+    overlay?.addEventListener('click', function (e) {
         if (e.target === overlay) {
             closeModal();
         }
@@ -139,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Form submission handler
     const form = document.getElementById('addArticleForm');
-    form.addEventListener('submit', function (e) {
+    form?.addEventListener('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData.entries());
@@ -149,4 +157,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial setup
     populateCategories();
-}); 
+});
