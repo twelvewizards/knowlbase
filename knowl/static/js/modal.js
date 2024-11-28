@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', function () {
         userEmailDisplay: document.getElementById('userEmail'),
         confirmRemoveBtn: document.getElementById('confirmRemoveUser'),
         cancelRemoveBtn: document.getElementById('cancelRemoveUser'),
+        editUserModal: document.getElementById('editUserModal'),
+        editUserName: document.getElementById('editUserName'),
+        editUserGroup: document.getElementById('editUserGroup'),
+        confirmEditUser: document.getElementById('confirmEditUser'),
+        cancelEditUser: document.getElementById('cancelEditUser'),
         mainContent: document.querySelector('.main-content'),
         body: document.body,
     };
@@ -83,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close modals when overlay is clicked
     elements.overlay?.addEventListener('click', () => {
-        const openModals = [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal, elements.removeUserModal];
+        const openModals = [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal, elements.removeUserModal, elements.editUserModal];
         openModals.forEach((modal) => {
             if (modal.style.display === 'block') closeModal(modal);
         });
@@ -94,20 +99,20 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('/fetch-users/');
             if (!response.ok) {
-                console.error(`Failed to fetch users: ${response.status} ${response.statusText}`);
+                const errorText = await response.text();
+                console.error(`Failed to fetch users. Response: ${errorText}`);
                 throw new Error('Failed to fetch users');
             }
             const users = await response.json();
-
             elements.manageUsersTableBody.innerHTML = ''; // Clear existing rows
-
+    
             if (users.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="4">No users found</td>`;
                 elements.manageUsersTableBody.appendChild(row);
                 return;
             }
-
+    
             users.forEach((user) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -129,9 +134,11 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error in fetchUsers:', error);
         }
     };
+    
 
     // Event delegation for dynamically added delete buttons
     elements.manageUsersTableBody.addEventListener('click', (e) => {
+        // Handle Delete Button
         if (e.target.closest('.delete-btn')) {
             const deleteBtn = e.target.closest('.delete-btn');
             const email = deleteBtn.closest("tr").querySelector("td:nth-child(2)").textContent;
@@ -139,6 +146,16 @@ document.addEventListener('DOMContentLoaded', function () {
             elements.userEmailDisplay.textContent = email;
             elements.userEmailDisplay.dataset.userId = userId;
             openRemoveUserModal(email);
+        }
+    
+        // Handle Edit Button
+        if (e.target.closest('.edit-btn')) {
+            const editBtn = e.target.closest('.edit-btn');
+            const row = editBtn.closest('tr');
+            const email = row.querySelector('td:nth-child(2)').textContent;
+            const role = row.querySelector('td:nth-child(3)').textContent;
+            const userId = row.querySelector('.delete-btn').dataset.userId; // Assume delete-btn contains user ID
+            openEditUserModal(email, role, userId);
         }
     });
 
@@ -168,44 +185,86 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Open Edit User Modal
-    const openEditUserModal = (email, role) => {
-        const editUserModal = document.getElementById('editUserModal');
-        const editUserName = document.getElementById('editUserName');
-        const editUserGroup = document.getElementById('editUserGroup');
-
-        // Populate fields
-        editUserName.value = email;
-        editUserGroup.value = role;
-
-        // Add dim effect to Manage Users Modal
-        elements.manageUsersModal.classList.add('dimmed');
-        openModal(editUserModal, false); // Open Edit User Modal without affecting Main Content
+    const openEditUserModal = (email, role, userId) => {
+        elements.editUserName.value = email;
+        elements.editUserGroup.innerHTML = ""; // Clear existing options
+    
+        // Determine role options based on the current user's role
+        const currentUserRole = elements.body.dataset.role; // Assume role is passed as a data attribute
+        let roleOptions = ["Student"]; // Default option for all users
+    
+        if (currentUserRole === "Admin") {
+            roleOptions = ["Admin", "Tutor", "Student"];
+        } else if (currentUserRole === "Tutor") {
+            roleOptions = ["Tutor", "Student"];
+        }
+    
+        // Populate the dropdown
+        roleOptions.forEach((roleOption) => {
+            const option = document.createElement("option");
+            option.value = roleOption;
+            option.textContent = roleOption;
+            if (roleOption === role) option.selected = true;
+            elements.editUserGroup.appendChild(option);
+        });
+    
+        elements.editUserModal.dataset.userId = userId; // Store the userId in dataset
+        elements.manageUsersModal.classList.add("dimmed"); // Dim the Manage Users Modal
+        openModal(elements.editUserModal, false);
     };
+    
+
 
     // Close Edit User Modal
     const closeEditUserModal = () => {
-        const editUserModal = document.getElementById('editUserModal');
-        closeModal(editUserModal, false); // Close Edit User Modal only
-
-        // Remove dim effect from Manage Users Modal
+        closeModal(elements.editUserModal, false);
         elements.manageUsersModal.classList.remove('dimmed');
     };
 
     // Attach Cancel Button Event for Edit User Modal
-    document.getElementById('cancelEditUser').addEventListener('click', closeEditUserModal);
+    elements.cancelEditUser.addEventListener('click', closeEditUserModal);
 
-    // Add event listener to Edit buttons
-    elements.manageUsersTableBody.addEventListener('click', (e) => {
-        if (e.target.closest('.edit-btn')) {
-            const editBtn = e.target.closest('.edit-btn');
-            const email = editBtn.closest('tr').querySelector('td:nth-child(2)').textContent;
-            const role = editBtn.closest('tr').querySelector('td:nth-child(3)').textContent;
-            openEditUserModal(email, role); // Open Edit User Modal with prefilled data
+    // Attach Save Changes Event
+    elements.confirmEditUser.addEventListener('click', async () => {
+        const userId = elements.editUserModal.dataset.userId;
+        const newEmail = elements.editUserName.value;
+        const newRole = elements.editUserGroup.value;
+    
+        if (!userId || !newEmail || !newRole) {
+            console.error("DEBUG: Missing required fields.");
+            return;
+        }
+    
+        try {
+            console.log(`DEBUG: Sending request to update user ID ${userId}`);
+            const response = await fetch("/update-user/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCsrfToken(),
+                },
+                body: JSON.stringify({ user_id: userId, email: newEmail, role: newRole }),
+            });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`DEBUG: Failed to update user. Response: ${errorText}`);
+                throw new Error(errorText);
+            }
+    
+            const result = await response.json();
+            if (result.status === "success") {
+                console.log(`DEBUG: User updated successfully. Message: ${result.message}`);
+                closeEditUserModal();
+                fetchUsers(); // Refresh the user list
+            } else {
+                console.error(`DEBUG: Failed to update user. Message: ${result.message}`);
+            }
+        } catch (error) {
+            console.error(`DEBUG: Error updating user: ${error}`);
         }
     });
-
-
-
+    
 
     // Open Remove User Modal
     const openRemoveUserModal = (email) => {
@@ -224,37 +283,36 @@ document.addEventListener('DOMContentLoaded', function () {
     elements.cancelRemoveBtn?.addEventListener('click', closeRemoveUserModal);
 
     // Attach Confirm Button Event with debugging and proper functionality
-elements.confirmRemoveBtn?.addEventListener('click', async () => {
-    const userId = elements.userEmailDisplay.dataset.userId;
-    if (!userId) {
-        console.error("DEBUG: User ID not found in the modal.");
-        return; // No alert, just log the issue
-    }
-
-    try {
-        console.log(`DEBUG: Sending request to delete user with ID ${userId}`);
-        const response = await fetch("/delete-user/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-CSRFToken": getCsrfToken(),
-            },
-            body: new URLSearchParams({ user_id: userId }),
-        });
-
-        const result = await response.json();
-        if (response.ok && result.status === "success") {
-            console.log(`DEBUG: User deleted successfully. Message: ${result.message}`);
-            closeRemoveUserModal();
-            fetchUsers(); // Refresh the user list
-        } else {
-            console.error(`DEBUG: Failed to delete user. Message: ${result.message}`);
+    elements.confirmRemoveBtn?.addEventListener('click', async () => {
+        const userId = elements.userEmailDisplay.dataset.userId;
+        if (!userId) {
+            console.error("DEBUG: User ID not found in the modal.");
+            return;
         }
-    } catch (error) {
-        console.error(`DEBUG: Error removing user: ${error}`);
-    }
-});
 
+        try {
+            console.log(`DEBUG: Sending request to delete user ID ${userId}`);
+            const response = await fetch("/delete-user/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCsrfToken(),
+                },
+                body: new URLSearchParams({ user_id: userId }),
+            });
+
+            const result = await response.json();
+            if (response.ok && result.status === "success") {
+                console.log(`DEBUG: User deleted successfully. Message: ${result.message}`);
+                closeRemoveUserModal();
+                fetchUsers();
+            } else {
+                console.error(`DEBUG: Failed to delete user. Message: ${result.message}`);
+            }
+        } catch (error) {
+            console.error(`DEBUG: Error removing user: ${error}`);
+        }
+    });
 
     // Helper: Get CSRF Token
     const getCsrfToken = () => {

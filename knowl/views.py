@@ -151,13 +151,65 @@ def user_logout(request):
     return redirect('index')
 
 @login_required
-@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="/", redirect_field_name=None)
+@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists(), login_url="/", redirect_field_name=None)
 def fetch_users(request):
     try:
-        users = User.objects.all().values("id", "username", "email", "groups__name")
+        if request.user.groups.filter(name="Admin").exists():
+            # Admins see all users
+            users = User.objects.all().values("id", "username", "email", "groups__name")
+        elif request.user.groups.filter(name="Tutor").exists():
+            # Tutors see both Student and Tutor accounts
+            users = User.objects.filter(groups__name__in=["Tutor", "Student"]).values("id", "username", "email", "groups__name")
+        else:
+            # Other roles are not allowed
+            return JsonResponse({"error": "Permission denied"}, status=403)
+
         return JsonResponse(list(users), safe=False)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists(), login_url="/", redirect_field_name=None)
+@csrf_exempt
+def update_user(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            user_id = data.get("user_id")
+            new_email = data.get("email")
+            new_role = data.get("role")
+
+            if not user_id or not new_email or not new_role:
+                return JsonResponse({"status": "error", "message": "Missing required fields."}, status=400)
+
+            user = User.objects.get(id=user_id)
+            if user.email != new_email:
+                if User.objects.filter(email=new_email).exists():
+                    return JsonResponse({"status": "error", "message": "Email already exists."}, status=400)
+                user.email = new_email
+                user.username = new_email  # Sync username with email
+
+            # Check role change permissions
+            if request.user.groups.filter(name="Tutor").exists():
+                if new_role not in ["Tutor", "Student"]:
+                    return JsonResponse({"status": "error", "message": "Permission denied for role change."}, status=403)
+
+            user.groups.clear()
+            group, created = Group.objects.get_or_create(name=new_role)
+            user.groups.add(group)
+            user.save()
+
+            return JsonResponse({"status": "success", "message": "User updated successfully."})
+        except User.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "User not found."}, status=404)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
+
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="/", redirect_field_name=None)

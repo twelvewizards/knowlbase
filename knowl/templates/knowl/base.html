@@ -26,7 +26,9 @@
     <script defer src="{% static 'js/add-article.js' %}"></script>
 </head>
 <body>
-    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" data-authenticated="{{ user_authenticated }}">
+    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" 
+      data-authenticated="{{ user_authenticated }}" 
+      data-role="{{ user_role }}">
         <div class="page-wrapper">
             <header>
                 <nav class="navbar">
