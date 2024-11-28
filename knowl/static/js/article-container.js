@@ -15,6 +15,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const activeCategories = { art: true, mathematics: true, technology: true };
 
+        // Function to check authentication status
+        function isAuthenticated() {
+            return document.body.dataset.authenticated === 'True';
+        }
+
+        // Set the default content message based on authentication status
+        function setDefaultContentMessage() {
+            if (isAuthenticated()) {
+                contentSection.innerHTML = '<p>Click an article to view its contents</p>';
+            } else {
+                contentSection.innerHTML = '<p>Sign up or log in to view article contents!</p>';
+            }
+        }
+
         function renderArticles() {
             articleButtonsContainer.innerHTML = '';
             const filteredArticles = articlesData.filter(article => {
@@ -35,22 +49,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 articleButtonsContainer.appendChild(button);
 
                 button.addEventListener('click', function () {
-                    console.log("Article Clicked:", article);
-                    contentSection.classList.remove('article-content-default');
-                    contentSection.classList.add('article-content-expanded');
-                    updateContentSection(article);
+                    if (!isAuthenticated()) {
+                        flashSignUpPrompt();
+                    } else {
+                        console.log("Article Clicked:", article);
+                        contentSection.classList.remove('article-content-default');
+                        contentSection.classList.add('article-content-expanded');
+                        updateContentSection(article);
+                    }
                 });
             });
+        }
 
-            const addNewButton = document.createElement('button');
-            addNewButton.className = 'article-button add-new';
-            addNewButton.textContent = '+ Add new';
-            articleButtonsContainer.appendChild(addNewButton);
-
-            addNewButton.addEventListener('click', function () {
-                console.log("Add New button clicked!");
-                // Logic for adding a new article
-            });
+        function flashSignUpPrompt() {
+            contentSection.innerHTML = '<p class="flash-prompt">Sign up or log in to view article contents!</p>';
+            contentSection.classList.add('flash-effect');
+            setTimeout(() => {
+                contentSection.classList.remove('flash-effect');
+                setDefaultContentMessage();
+            }, 1000);
         }
 
         function updateContentSection(article) {
@@ -113,10 +130,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (contentSection.classList.contains('article-content-expanded')) {
                 contentSection.classList.remove('article-content-expanded');
                 contentSection.classList.add('article-content-default');
-                contentSection.innerHTML = '<p>Click an article to view its contents</p>';
+                setDefaultContentMessage();
             }
         });
 
+        setDefaultContentMessage(); // Set the message on page load
         renderArticles();
 
         filterButtons.forEach(button => {

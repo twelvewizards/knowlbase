@@ -323,4 +323,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial Fetch Users
     fetchUsers();
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const addNewButton = document.querySelector('.article-button.add-new');
+        const userAuthenticated = document.body.dataset.authenticated === 'True';
+        const userRole = document.body.dataset.role;
+    
+        // Hide button if user is not authenticated or does not have the correct role
+        if (!userAuthenticated || !['Admin', 'Tutor'].includes(userRole)) {
+            addNewButton?.remove(); // Completely remove the button from DOM
+        }
+    });
+    
 });

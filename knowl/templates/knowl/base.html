@@ -57,7 +57,7 @@
             <main class="main-content">
                 <!-- Article content section -->
                 <div class="article-content-default">
-                    <p>Click an article to view its contents</p>
+                    <p>Sign up or log in to view article contents!</p>
                 </div>
         
                 <!-- Dropdown container -->
@@ -104,10 +104,10 @@
                             {{ article.title }}
                         </button>
                     {% endfor %}
-                    {% if user.is_authenticated %}
+                    {% if user_authenticated and user_role in "Admin,Tutor" %}
                         <button class="article-button add-new">+ Add new</button>
                     {% endif %}
-                </div>
+                </div>                
             </main>
         </div>
         
