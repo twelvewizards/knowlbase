@@ -9,14 +9,16 @@ import json
 from .models import Article
 
 def index(request):
-    # Initialize user_role
+    # Initialize user_role and user_groups
     user_role = None
+    user_groups = []
 
     # Determine authentication and role
     if request.user.is_authenticated:
-        if request.user.groups.filter(name="Admin").exists():
+        user_groups = list(request.user.groups.values_list('name', flat=True))
+        if "Admin" in user_groups:
             user_role = "Admin"
-        elif request.user.groups.filter(name="Tutor").exists():
+        elif "Tutor" in user_groups:
             user_role = "Tutor"
         else:
             user_role = "Student"
@@ -24,6 +26,7 @@ def index(request):
     # Debug prints after assignment
     print(f"DEBUG: User authenticated: {request.user.is_authenticated}")
     print(f"DEBUG: User role: {user_role}")
+    print(f"DEBUG: User groups: {user_groups}")  # Safe to print even if user is not authenticated
 
     # Fetch all articles and their related categories
     articles = list(Article.objects.values(

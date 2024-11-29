@@ -7,7 +7,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const filterButtons = document.querySelectorAll('.category-filters .filter-option input');
         const contentSection = document.querySelector('.article-content-default');
         const dropdownContainer = document.querySelector('.dropdown-container');
+        const addNewButton = document.querySelector('.article-button.add-new');
+        const userAuthenticated = document.body.dataset.authenticated === 'True';
+        const userRole = document.body.dataset.role;
 
+        console.log("DEBUG: User Authenticated:", userAuthenticated);
+        console.log("DEBUG: User Role:", userRole);
+
+        // Check if necessary elements exist
         if (!articleButtonsContainer || !filterButtons.length) {
             console.error("Required elements not found!");
             return;
@@ -17,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Function to check authentication status
         function isAuthenticated() {
-            return document.body.dataset.authenticated === 'True';
+            return userAuthenticated;
         }
 
         // Set the default content message based on authentication status
@@ -29,19 +36,23 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        // Render articles based on selected categories
         function renderArticles() {
-            articleButtonsContainer.innerHTML = '';
+            articleButtonsContainer.innerHTML = ''; // Clear container
+
             const filteredArticles = articlesData.filter(article => {
-                if (article.category_id === 1 && activeCategories.art) return true;
-                if (article.category_id === 2 && activeCategories.mathematics) return true;
-                if (article.category_id === 3 && activeCategories.technology) return true;
-                return false;
+                return (
+                    (article.category_id === 1 && activeCategories.art) ||
+                    (article.category_id === 2 && activeCategories.mathematics) ||
+                    (article.category_id === 3 && activeCategories.technology)
+                );
             });
 
             filteredArticles.forEach(article => {
                 const button = document.createElement('button');
                 button.className = 'article-button';
                 button.textContent = article.title;
+
                 if (article.category_id === 1) button.classList.add('art');
                 if (article.category_id === 2) button.classList.add('mathematics');
                 if (article.category_id === 3) button.classList.add('technology');
@@ -59,8 +70,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             });
+
+            // Add "+ Add New" button if user is authorized
+            if (userAuthenticated && ['Admin', 'Tutor'].includes(userRole)) {
+                if (!document.querySelector('.article-button.add-new')) {
+                    const addButton = document.createElement('button');
+                    addButton.className = 'article-button add-new';
+                    addButton.textContent = '+ Add New';
+                    articleButtonsContainer.appendChild(addButton);
+
+                    addButton.addEventListener('click', function () {
+                        console.log("DEBUG: Add New button clicked.");
+                        // Your functionality to open the "Add New Article" modal goes here
+                    });
+                }
+            }
+
+            console.log("DEBUG: Articles rendered:", filteredArticles);
         }
 
+        // Flash sign-up prompt for unauthenticated users
         function flashSignUpPrompt() {
             contentSection.innerHTML = '<p class="flash-prompt">Sign up or log in to view article contents!</p>';
             contentSection.classList.add('flash-effect');
@@ -70,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 1000);
         }
 
+        // Update content section with article details
         function updateContentSection(article) {
             contentSection.innerHTML = `
                 <div class="article-header">
@@ -126,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
         }
 
+        // Dropdown functionality to collapse content
         dropdownContainer.addEventListener('click', function () {
             if (contentSection.classList.contains('article-content-expanded')) {
                 contentSection.classList.remove('article-content-expanded');
@@ -134,9 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        setDefaultContentMessage(); // Set the message on page load
-        renderArticles();
-
+        // Add event listeners for filter buttons
         filterButtons.forEach(button => {
             button.addEventListener('click', function () {
                 if (button.name.includes('art')) {
@@ -152,7 +181,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderArticles();
             });
         });
+
+        // Initial setup
+        setDefaultContentMessage(); // Set default content message
+        renderArticles(); // Render articles on page load
     } catch (error) {
-        console.error("Failed to parse articles data:", error);
+        console.error("Error occurred:", error);
     }
 });
