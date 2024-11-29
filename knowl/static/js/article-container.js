@@ -101,6 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update content section with article details
         function updateContentSection(article) {
+            const userRole = document.body.dataset.role;
+            const showActions = ['Admin', 'Tutor'].includes(userRole);
+            
             contentSection.innerHTML = `
                 <div class="article-header">
                     <div class="header-section">
@@ -137,10 +140,23 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span class="header-value">${article.location || '-'}</span>
                         </div>
                     </div>
-                </div>
-                <div class="article-content">
-                    <p>${article.about || 'No description available.'}</p>
-                </div>
+                    ${showActions ? `
+                    <div class="content-actions">
+                        <button class="action-button edit-article-btn" title="Edit">
+                            <img src="https://img.icons8.com/ios-glyphs/20/00cc00/pencil--v1.png" alt="Edit">
+                        </button>
+                        <button 
+                            class="action-button delete-article-btn" 
+                            data-article-title="${article.title}"
+                            title="Delete"
+                        >
+                            <img src="https://img.icons8.com/ios-glyphs/20/cc0000/trash--v1.png" alt="Delete">
+                        </button>
+                    </div>
+                    ` : ''}
+                    <div class="article-content">
+                        <p>${article.about || 'No description available.'}</p>
+                    </div>
                 <div class="article-footer">
                     <div class="footer-group">
                         <span class="footer-item">Dimensions: ${article.dimensions || '-'}</span>
@@ -155,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
         }
+        
 
         // Dropdown functionality to collapse content
         dropdownContainer.addEventListener('click', function () {
@@ -185,6 +202,52 @@ document.addEventListener('DOMContentLoaded', function () {
         // Initial setup
         setDefaultContentMessage(); // Set default content message
         renderArticles(); // Render articles on page load
+
+        // Add event delegation for edit button clicks
+        document.addEventListener('click', function(event) {
+            const editBtn = event.target.closest('.edit-article-btn');
+            if (editBtn) {
+                console.log("Edit button clicked"); // Debug log
+                
+                // Get modal elements
+                const modal = document.getElementById('addArticleModal');
+                console.log("Modal found:", modal); // Debug log
+
+                if (!modal) {
+                    console.error("Modal element not found!");
+                    return;
+                }
+
+                const overlay = document.getElementById('overlay');
+                console.log("Overlay found:", overlay); // Debug log
+
+                if (!overlay) {
+                    console.error("Overlay element not found!");
+                    return;
+                }
+
+                // Show modal and overlay with opacity transition
+                overlay.style.display = 'block';
+                modal.style.display = 'block';
+                
+                // Force reflow
+                modal.offsetHeight;
+                
+                // Add opacity
+                overlay.style.opacity = '1';
+                modal.style.opacity = '1';
+                
+                // Handle overlay click to close modal
+                overlay.onclick = () => {
+                    modal.style.opacity = '0';
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }, 300);
+                };
+            }
+        });
     } catch (error) {
         console.error("Error occurred:", error);
     }
