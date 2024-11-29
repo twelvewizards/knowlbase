@@ -342,6 +342,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalArticleTitle = document.getElementById('modalArticleTitle');
     const confirmRemoveArticleBtn = document.getElementById('confirmRemoveArticle');
     const cancelRemoveArticleBtn = document.getElementById('cancelRemoveArticle');
+    const mainContent = document.querySelector('.main-content');
 
     // Function to open the Remove Article Modal
     function openRemoveArticleModal(articleTitle) {
@@ -349,18 +350,18 @@ document.addEventListener('DOMContentLoaded', function () {
         modalArticleTitle.textContent = articleTitle;
         elements.overlay.style.display = 'block';
         removeArticleModal.style.display = 'block';
+        mainContent.classList.add('blur');
         setTimeout(() => {
             elements.overlay.style.opacity = '1';
             removeArticleModal.style.opacity = '1';
-            removeArticleModal.style.transform = 'translate(-50%, -50%) scale(1)';
         }, 10);
     }
 
     // Function to close the Remove Article Modal
     function closeRemoveArticleModal() {
         removeArticleModal.style.opacity = '0';
-        removeArticleModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
         elements.overlay.style.opacity = '0';
+        mainContent.classList.remove('blur');
         setTimeout(() => {
             removeArticleModal.style.display = 'none';
             elements.overlay.style.display = 'none';
@@ -376,6 +377,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Delete button clicked for article:', articleTitle);
                 openRemoveArticleModal(articleTitle);
             }
+        }
+        
+        // Close modal when clicking overlay
+        if (event.target === elements.overlay && removeArticleModal.style.display === 'block') {
+            closeRemoveArticleModal();
         }
     });
 

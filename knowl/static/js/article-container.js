@@ -202,6 +202,52 @@ document.addEventListener('DOMContentLoaded', function () {
         // Initial setup
         setDefaultContentMessage(); // Set default content message
         renderArticles(); // Render articles on page load
+
+        // Add event delegation for edit button clicks
+        document.addEventListener('click', function(event) {
+            const editBtn = event.target.closest('.edit-article-btn');
+            if (editBtn) {
+                console.log("Edit button clicked"); // Debug log
+                
+                // Get modal elements
+                const modal = document.getElementById('addArticleModal');
+                console.log("Modal found:", modal); // Debug log
+
+                if (!modal) {
+                    console.error("Modal element not found!");
+                    return;
+                }
+
+                const overlay = document.getElementById('overlay');
+                console.log("Overlay found:", overlay); // Debug log
+
+                if (!overlay) {
+                    console.error("Overlay element not found!");
+                    return;
+                }
+
+                // Show modal and overlay with opacity transition
+                overlay.style.display = 'block';
+                modal.style.display = 'block';
+                
+                // Force reflow
+                modal.offsetHeight;
+                
+                // Add opacity
+                overlay.style.opacity = '1';
+                modal.style.opacity = '1';
+                
+                // Handle overlay click to close modal
+                overlay.onclick = () => {
+                    modal.style.opacity = '0';
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }, 300);
+                };
+            }
+        });
     } catch (error) {
         console.error("Error occurred:", error);
     }
