@@ -1,7 +1,7 @@
 /* Main article content container styles */
 .article-content-default p {
     font-family: 'Public Sans', sans-serif; /* Match the page font */
-    font-size: 16px; /* Adjust font size if needed */
+    font-size: 14px; /* Adjust font size if needed */
     color: #333; /* Darker color for better contrast */
     text-align: center; /* Center the text */
     margin: 0;
@@ -24,13 +24,53 @@
     border-bottom: 4px solid #1a1a1a; /* Thick black bottom border */
 }
 
-/* Header section styling */
-.article-header {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
-    gap: 15px; /* Spacing between columns */
-    margin-bottom: 20px; /* Space below header */
+/* Positioning the edit and delete icons */
+.content-actions {
+    position: absolute;
+    top: 5px; /* Slightly lower for better alignment */
+    right: 10px;
+    display: flex;
+    gap: 8px;
 }
+
+/* Buttons for edit and delete */
+.content-actions .action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* Smaller icon size */
+.content-actions img {
+    width: 16px; /* Ensure small size */
+    height: 16px;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Pencil (edit) icon in green */
+.content-actions .edit-article-btn img {
+    filter: invert(41%) sepia(93%) saturate(613%) hue-rotate(100deg) brightness(90%) contrast(91%);
+}
+
+/* Bin (delete) icon in red */
+.content-actions .delete-article-btn img {
+    filter: invert(24%) sepia(92%) saturate(749%) hue-rotate(1deg) brightness(89%) contrast(93%);
+}
+
+/* Hover effect for both icons */
+.content-actions .action-button:hover img {
+    transform: scale(1.2); /* Slight zoom on hover */
+}
+
+/* Ensure the article container is relative for icon placement */
+.article-header {
+    position: relative;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+}
+
 
 .header-section {
     display: flex;

@@ -137,6 +137,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             <span class="header-value">${article.location || '-'}</span>
                         </div>
                     </div>
+                    <!-- Icons -->
+                    <div class="content-actions">
+                        <button class="action-button edit-article-btn" title="Edit">
+                            <img src="https://img.icons8.com/ios-glyphs/20/000000/edit--v1.png" alt="Edit">
+                        </button>
+                        <button class="action-button delete-article-btn" title="Delete">
+                            <img src="https://img.icons8.com/ios-glyphs/20/000000/trash--v1.png" alt="Delete">
+                        </button>
+                    </div>
                 </div>
                 <div class="article-content">
                     <p>${article.about || 'No description available.'}</p>
@@ -155,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
         }
+        
 
         // Dropdown functionality to collapse content
         dropdownContainer.addEventListener('click', function () {
