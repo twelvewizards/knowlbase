@@ -25,10 +25,12 @@
     <script defer src="{% static 'js/modal.js' %}"></script>
     <script defer src="{% static 'js/add-article.js' %}"></script>
 </head>
-<body>
-    <body class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" 
-      data-authenticated="{{ user_authenticated }}" 
-      data-role="{{ user_role }}">
+<body 
+        class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" 
+        data-authenticated="{{ user_authenticated }}" 
+        data-role="{{ user_role }}"
+    >
+
         <div class="page-wrapper">
             <header>
                 <nav class="navbar">
@@ -100,14 +102,15 @@
                 <div class="article-buttons-container">
                     {% for article in articles %}
                         <button class="article-button 
-                            {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% else %}default{% endif %}">
+                            {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}">
                             {{ article.title }}
                         </button>
                     {% endfor %}
                     {% if user_authenticated and user_role in "Admin,Tutor" %}
                         <button class="article-button add-new">+ Add new</button>
                     {% endif %}
-                </div>                
+                </div>
+                          
             </main>
         </div>
         
