@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-from .models import Article
+from .models import Article, Category, Type
 
 def index(request):
     # Initialize user_role and user_groups
@@ -50,29 +50,57 @@ def index(request):
 
 @csrf_protect
 @login_required(login_url='/')  # Redirect unauthenticated users
-@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists(), login_url='/', redirect_field_name=None)
+@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists(), login_url='/')
 def add_article(request):
-    # Only authorized users can proceed
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            
+            # Validate required fields
+            required_fields = ['title', 'about', 'category', 'type']
+            for field in required_fields:
+                if not data.get(field):
+                    return JsonResponse({
+                        'success': False,
+                        'error': f'{field} is required'
+                    }, status=400)
+            
+            # Let PostgreSQL handle the ID generation
             article = Article.objects.create(
                 title=data['title'],
-                about=data['about'],
-                notable_work=data.get('notable_work'),
-                year=data.get('year'),
-                medium=data.get('medium'),
-                dimensions=data.get('dimensions'),
-                location=data.get('location'),
-                nationality=data.get('nationality'),
-                known_for=data.get('known_for'),
+                about=data.get('about', ''),  # Provide default empty string
                 category_id=data['category'],
-                type_id=data['type']
+                type_id=data['type'],
+                notable_work=data.get('notable_work', ''),
+                year=data.get('year', ''),
+                medium=data.get('medium', ''),
+                dimensions=data.get('dimensions', ''),
+                location=data.get('location', ''),
+                nationality=data.get('nationality', ''),
+                known_for=data.get('known_for', ''),
+                born=data.get('born', ''),
+                died=data.get('died', ''),
+                developer=data.get('developer', ''),
+                designed_by=data.get('designed_by', '')
             )
-            return JsonResponse({'success': True, 'id': article.id})
+            
+            return JsonResponse({
+                'success': True, 
+                'message': 'Article created successfully',
+                'id': article.id
+            })
+            
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=400)
-    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+            print(f"Error adding article: {str(e)}")  # Add debug print
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=400)
+            
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method'
+    }, status=405)
 
 def user_login(request):
     if request.method == 'POST':
@@ -252,4 +280,12 @@ def delete_user(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     print("DEBUG: Invalid request method.")  # Debugging
     return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+def get_categories(request):
+    categories = Category.objects.all().values('id', 'name')
+    return JsonResponse(list(categories), safe=False)
+
+def get_types(request, category_id):
+    types = Type.objects.filter(category_id=category_id).values('id', 'name')
+    return JsonResponse(list(types), safe=False)
 
