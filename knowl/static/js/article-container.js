@@ -101,6 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Update content section with article details
         function updateContentSection(article) {
+            const userRole = document.body.dataset.role; // Fetch user role from dataset
+            const showActions = ['Admin', 'Tutor'].includes(userRole);
+
+            
             contentSection.innerHTML = `
                 <div class="article-header">
                     <div class="header-section">
@@ -138,18 +142,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                     <!-- Icons -->
+                    ${showActions ? `
                     <div class="content-actions">
                         <button class="action-button edit-article-btn" title="Edit">
-                            <img src="https://img.icons8.com/ios-glyphs/20/000000/edit--v1.png" alt="Edit">
+                            <img src="https://img.icons8.com/ios-glyphs/20/00cc00/pencil--v1.png" alt="Edit">
                         </button>
                         <button class="action-button delete-article-btn" title="Delete">
-                            <img src="https://img.icons8.com/ios-glyphs/20/000000/trash--v1.png" alt="Delete">
+                            <img src="https://img.icons8.com/ios-glyphs/20/cc0000/trash--v1.png" alt="Delete">
                         </button>
                     </div>
-                </div>
-                <div class="article-content">
-                    <p>${article.about || 'No description available.'}</p>
-                </div>
+                    ` : ''}
+                    <div class="article-content">
+                        <p>${article.about || 'No description available.'}</p>
+                    </div>
                 <div class="article-footer">
                     <div class="footer-group">
                         <span class="footer-item">Dimensions: ${article.dimensions || '-'}</span>
