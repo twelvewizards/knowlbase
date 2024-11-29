@@ -90,6 +90,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    margin-top: 16px;
 }
 
 /* Input and Select Styles */
@@ -132,7 +133,7 @@ input[name="notable_work"] {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
     gap: 12px;
-    margin: 8px 0;
+    width: 100%;
 }
 
 .inline-fields input {
@@ -144,7 +145,7 @@ input[name="notable_work"] {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
     gap: 12px;
-    margin: 8px 0;
+    width: 100%;
 }
 
 .bottom-fields input {
