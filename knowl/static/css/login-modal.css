@@ -54,9 +54,26 @@
     align-items: center;
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 10px;
+    padding: 8px 12px;
     margin-bottom: 15px;
     background-color: #f9f9f9;
+    position: relative;
+}
+
+.input-group input {
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+}
+
+.input-group label {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
 }
 
 .input-group label img {
@@ -65,24 +82,31 @@
     margin-right: 10px;
 }
 
-.input-group input {
-    border: none;
-    outline: none;
-    width: 100%;
-    background: transparent;
-    font-size: 14px;
-}
-
 /* Show password button */
 .show-password-btn {
     background: none;
     border: none;
+    padding: 5px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+}
+
+.show-password-btn:focus {
+    outline: none;
 }
 
 .show-password-btn img {
     width: 20px;
     height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.show-password-btn:hover img {
+    opacity: 1;
 }
 
 /* Forgot password link */

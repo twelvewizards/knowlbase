@@ -27,9 +27,12 @@ document.addEventListener('DOMContentLoaded', function () {
         newEmail: document.getElementById('newEmail'),
         mainContent: document.querySelector('.main-content'),
         body: document.body,
+        showPasswordBtns: document.querySelectorAll('.show-password-btn'),
+        passwordInputs: document.querySelectorAll('input[type="password"]'),
     };
 
     const userAuthenticated = elements.body.dataset.authenticated === 'True';
+    const userRole = elements.body.dataset.role;
 
     // Function to open a modal
     const openModal = (modal, shouldBlurMain = true) => {
@@ -57,16 +60,54 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 300);
     };
 
+    // Remove the nested DOMContentLoaded event listener and move its content here
+    const addNewButton = document.querySelector('.article-button.add-new');
+    if (!userAuthenticated || !['Admin', 'Tutor'].includes(userRole)) {
+        addNewButton?.remove();
+    }
+
+    // Password toggle functionality
+    function setupPasswordToggles() {
+        const passwordButtons = document.querySelectorAll('.show-password-btn');
+
+        passwordButtons.forEach(button => {
+            button.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Get the password input that's a sibling of this button
+                const passwordInput = this.previousElementSibling;
+                const img = this.querySelector('img');
+
+                console.log('Toggle clicked', {
+                    currentType: passwordInput.type,
+                    input: passwordInput
+                });
+
+                // Toggle the input type
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    img.src = 'https://img.icons8.com/ios/50/000000/invisible.png';
+                } else {
+                    passwordInput.type = 'password';
+                    img.src = 'https://img.icons8.com/ios/50/000000/visible.png';
+                }
+            };
+        });
+    }
+
     // Open Login Modal
     elements.loginBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         openModal(elements.loginModal);
+        setupPasswordToggles();
     });
 
     // Open Sign-Up Modal
     elements.signupBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         openModal(elements.signupModal);
+        setupPasswordToggles();
     });
 
     // Link from Login to Sign-Up Modal
@@ -75,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
         closeModal(elements.loginModal, false);
         setTimeout(() => {
             openModal(elements.signupModal);
+            setupPasswordToggles();
         }, 300);
     });
 
@@ -84,12 +126,16 @@ document.addEventListener('DOMContentLoaded', function () {
         closeModal(elements.signupModal, false);
         setTimeout(() => {
             openModal(elements.loginModal);
+            setupPasswordToggles();
         }, 300);
     });
 
+    // Initial setup of password toggles
+    setupPasswordToggles();
+
     // Close modals when overlay is clicked
     elements.overlay?.addEventListener('click', () => {
-        const openModals = [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal, elements.removeUserModal, elements.editUserModal];
+        const openModals = [elements.loginModal, elements.signupModal, elements.manageUsersModal, elements.addArticleModal, elements.removeUserModal, elements.editUserModal, removeArticleModal];
         openModals.forEach((modal) => {
             if (modal.style.display === 'block') closeModal(modal);
         });
@@ -106,14 +152,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const users = await response.json();
             elements.manageUsersTableBody.innerHTML = ''; // Clear existing rows
-    
+
             if (users.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<td colspan="4">No users found</td>`;
                 elements.manageUsersTableBody.appendChild(row);
                 return;
             }
-    
+
             users.forEach((user) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -135,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error in fetchUsers:', error);
         }
     };
-    
+
 
     // Event delegation for dynamically added delete buttons
     elements.manageUsersTableBody.addEventListener('click', (e) => {
@@ -148,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
             elements.userEmailDisplay.dataset.userId = userId;
             openRemoveUserModal(email);
         }
-    
+
         // Handle Edit Button
         if (e.target.closest('.edit-btn')) {
             const editBtn = e.target.closest('.edit-btn');
@@ -189,17 +235,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const openEditUserModal = (email, role, userId) => {
         elements.editUserName.value = email;
         elements.editUserGroup.innerHTML = ""; // Clear existing options
-    
+
         // Determine role options based on the current user's role
         const currentUserRole = elements.body.dataset.role; // Assume role is passed as a data attribute
         let roleOptions = ["Student"]; // Default option for all users
-    
+
         if (currentUserRole === "Admin") {
             roleOptions = ["Admin", "Tutor", "Student"];
         } else if (currentUserRole === "Tutor") {
             roleOptions = ["Tutor", "Student"];
         }
-    
+
         // Populate the dropdown
         roleOptions.forEach((roleOption) => {
             const option = document.createElement("option");
@@ -208,12 +254,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (roleOption === role) option.selected = true;
             elements.editUserGroup.appendChild(option);
         });
-    
+
         elements.editUserModal.dataset.userId = userId; // Store the userId in dataset
         elements.manageUsersModal.classList.add("dimmed"); // Dim the Manage Users Modal
         openModal(elements.editUserModal, false);
     };
-    
+
 
 
     // Close Edit User Modal
@@ -230,12 +276,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const userId = elements.editUserModal.dataset.userId;
         const newEmail = elements.editUserName.value;
         const newRole = elements.editUserGroup.value;
-    
+
         if (!userId || !newEmail || !newRole) {
             console.error("DEBUG: Missing required fields.");
             return;
         }
-    
+
         try {
             console.log(`DEBUG: Sending request to update user ID ${userId}`);
             const response = await fetch("/update-user/", {
@@ -246,13 +292,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify({ user_id: userId, email: newEmail, role: newRole }),
             });
-    
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error(`DEBUG: Failed to update user. Response: ${errorText}`);
                 throw new Error(errorText);
             }
-    
+
             const result = await response.json();
             if (result.status === "success") {
                 console.log(`DEBUG: User updated successfully. Message: ${result.message}`);
@@ -265,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error(`DEBUG: Error updating user: ${error}`);
         }
     });
-    
+
 
     // Open Remove User Modal
     const openRemoveUserModal = (email) => {
@@ -315,34 +361,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Helper: Get CSRF Token
-    const getCsrfToken = () => {
-        const csrfCookie = document.cookie.split("; ").find((row) => row.startsWith("csrftoken="));
-        return csrfCookie ? csrfCookie.split("=")[1] : null;
-    };
-
-    // Initial Fetch Users
-    fetchUsers();
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const addNewButton = document.querySelector('.article-button.add-new');
-        const userAuthenticated = document.body.dataset.authenticated === 'True';
-        const userRole = document.body.dataset.role;
-    
-        // Hide button if user is not authenticated or does not have the correct role
-        if (!userAuthenticated || !['Admin', 'Tutor'].includes(userRole)) {
-            addNewButton?.remove(); // Completely remove the button from DOM
-        }
-    });
-    
-
     // Remove Article Modal functionality
     const removeArticleModal = document.getElementById('removeArticleModal');
     const modalArticleTitle = document.getElementById('modalArticleTitle');
     const confirmRemoveArticleBtn = document.getElementById('confirmRemoveArticle');
     const cancelRemoveArticleBtn = document.getElementById('cancelRemoveArticle');
-    const mainContent = document.querySelector('.main-content');
 
     // Function to open the Remove Article Modal
     function openRemoveArticleModal(articleTitle) {
@@ -350,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modalArticleTitle.textContent = articleTitle;
         elements.overlay.style.display = 'block';
         removeArticleModal.style.display = 'block';
-        mainContent.classList.add('blur');
+        elements.mainContent.classList.add('blur');
         setTimeout(() => {
             elements.overlay.style.opacity = '1';
             removeArticleModal.style.opacity = '1';
@@ -361,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function closeRemoveArticleModal() {
         removeArticleModal.style.opacity = '0';
         elements.overlay.style.opacity = '0';
-        mainContent.classList.remove('blur');
+        elements.mainContent.classList.remove('blur');
         setTimeout(() => {
             removeArticleModal.style.display = 'none';
             elements.overlay.style.display = 'none';
@@ -419,4 +442,14 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Error deleting article. Please try again.');
         }
     });
+
+    // Helper: Get CSRF Token
+    const getCsrfToken = () => {
+        const csrfCookie = document.cookie.split("; ").find((row) => row.startsWith("csrftoken="));
+        return csrfCookie ? csrfCookie.split("=")[1] : null;
+    };
+
+    // Initial Fetch Users
+    fetchUsers();
+
 });
