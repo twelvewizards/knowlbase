@@ -336,4 +336,81 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     
+
+    // Remove Article Modal functionality
+    const removeArticleModal = document.getElementById('removeArticleModal');
+    const modalArticleTitle = document.getElementById('modalArticleTitle');
+    const confirmRemoveArticleBtn = document.getElementById('confirmRemoveArticle');
+    const cancelRemoveArticleBtn = document.getElementById('cancelRemoveArticle');
+
+    // Function to open the Remove Article Modal
+    function openRemoveArticleModal(articleTitle) {
+        console.log('Opening remove article modal for:', articleTitle);
+        modalArticleTitle.textContent = articleTitle;
+        elements.overlay.style.display = 'block';
+        removeArticleModal.style.display = 'block';
+        setTimeout(() => {
+            elements.overlay.style.opacity = '1';
+            removeArticleModal.style.opacity = '1';
+            removeArticleModal.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 10);
+    }
+
+    // Function to close the Remove Article Modal
+    function closeRemoveArticleModal() {
+        removeArticleModal.style.opacity = '0';
+        removeArticleModal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        elements.overlay.style.opacity = '0';
+        setTimeout(() => {
+            removeArticleModal.style.display = 'none';
+            elements.overlay.style.display = 'none';
+        }, 300);
+    }
+
+    // Event delegation for delete article buttons
+    document.body.addEventListener('click', (event) => {
+        const deleteBtn = event.target.closest('.delete-article-btn');
+        if (deleteBtn) {
+            const articleTitle = deleteBtn.dataset.articleTitle;
+            if (articleTitle) {
+                console.log('Delete button clicked for article:', articleTitle);
+                openRemoveArticleModal(articleTitle);
+            }
+        }
+    });
+
+    // Cancel button closes the modal
+    cancelRemoveArticleBtn?.addEventListener('click', closeRemoveArticleModal);
+
+    // Confirm button handler with delete functionality
+    confirmRemoveArticleBtn?.addEventListener('click', async () => {
+        const articleTitle = modalArticleTitle.textContent;
+        console.log('Confirming deletion of article:', articleTitle);
+        
+        try {
+            const response = await fetch('/delete-article/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                },
+                body: JSON.stringify({ title: articleTitle }),
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                console.log('Article deleted successfully');
+                closeRemoveArticleModal();
+                // Refresh the page to show updated article list
+                window.location.reload();
+            } else {
+                console.error('Failed to delete article:', data.message);
+                alert('Failed to delete article: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error deleting article:', error);
+            alert('Error deleting article. Please try again.');
+        }
+    });
 });

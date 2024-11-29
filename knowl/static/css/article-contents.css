@@ -1,7 +1,7 @@
 /* Main article content container styles */
 .article-content-default p {
     font-family: 'Public Sans', sans-serif; /* Match the page font */
-    font-size: 16px; /* Adjust font size if needed */
+    font-size: 14px; /* Adjust font size if needed */
     color: #333; /* Darker color for better contrast */
     text-align: center; /* Center the text */
     margin: 0;
@@ -24,13 +24,57 @@
     border-bottom: 4px solid #1a1a1a; /* Thick black bottom border */
 }
 
-/* Header section styling */
-.article-header {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
-    gap: 15px; /* Spacing between columns */
-    margin-bottom: 20px; /* Space below header */
+/* Positioning the edit and delete icons */
+.content-actions {
+    position: absolute;
+    top: 5px; /* Slightly lower for better alignment */
+    right: 10px;
+    display: flex;
+    gap: 8px;
 }
+
+/* Buttons for edit and delete */
+.content-actions .action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* Smaller icon size */
+.content-actions img {
+    width: 16px; /* Ensure small size */
+    height: 16px;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Pencil (edit) icon in green */
+.content-actions .edit-article-btn img {
+    filter: invert(41%) sepia(93%) saturate(613%) hue-rotate(100deg) brightness(90%) contrast(91%);
+}
+
+/* Bin (delete) icon in red */
+.content-actions .delete-article-btn img {
+    filter: invert(24%) sepia(92%) saturate(749%) hue-rotate(1deg) brightness(89%) contrast(93%);
+}
+
+/* Hover effect for both icons */
+.content-actions .action-button:hover img {
+    transform: scale(1.2); /* Slight zoom on hover */
+}
+
+.content-actions.hidden {
+    display: none;
+}
+
+/* Ensure the article container is relative for icon placement */
+.article-header {
+    position: relative;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+}
+
 
 .header-section {
     display: flex;
@@ -156,4 +200,87 @@
     100% {
         opacity: 1;
     }
+}
+
+/* Remove Article Modal */
+.remove-article-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 20px 30px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Header for Remove Article Modal */
+.remove-article-modal .modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+/* Remove Article Modal Content */
+.remove-article-modal .modal-content {
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Modal Buttons */
+.remove-article-modal .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.remove-article-modal .modal-buttons button {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-article-modal .modal-buttons .confirm-btn {
+    background-color: #d9534f; /* Red button for confirmation */
+    color: white;
+}
+
+.remove-article-modal .modal-buttons .confirm-btn:hover {
+    background-color: #c9302c;
+}
+
+.remove-article-modal .modal-buttons .cancel-btn {
+    background-color: #5bc0de; /* Blue button for cancel */
+    color: white;
+}
+
+.remove-article-modal .modal-buttons .cancel-btn:hover {
+    background-color: #31b0d5;
+}
+
+/* Overlay styles if not already defined elsewhere */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
