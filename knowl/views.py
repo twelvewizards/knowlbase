@@ -289,3 +289,39 @@ def get_types(request, category_id):
     types = Type.objects.filter(category_id=category_id).values('id', 'name')
     return JsonResponse(list(types), safe=False)
 
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists(), login_url="/", redirect_field_name=None)
+@csrf_exempt
+def delete_article(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            article_title = data.get("title")
+            
+            if not article_title:
+                return JsonResponse({"status": "error", "message": "Article title not provided."}, status=400)
+
+            article = Article.objects.get(title=article_title)
+            article.delete()
+            
+            return JsonResponse({
+                "status": "success", 
+                "message": "Article deleted successfully."
+            })
+            
+        except Article.DoesNotExist:
+            return JsonResponse({
+                "status": "error", 
+                "message": "Article not found."
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error", 
+                "message": str(e)
+            }, status=500)
+            
+    return JsonResponse({
+        "status": "error", 
+        "message": "Invalid request method."
+    }, status=405)
+
