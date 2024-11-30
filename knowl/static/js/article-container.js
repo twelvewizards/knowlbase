@@ -144,7 +144,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="content-actions">
                         <button 
                             class="action-button edit-article-btn" 
-                            data-article='${JSON.stringify(article).replace(/'/g, "&#39;")}'
+                            data-article='${JSON.stringify({
+                                id: article.id,
+                                title: article.title,
+                                about: article.about,
+                                category__name: article.category__name,
+                                type__name: article.type__name,
+                                born: article.born,
+                                died: article.died,
+                                nationality: article.nationality,
+                                known_for: article.known_for,
+                                notable_work: article.notable_work,
+                                year: article.year,
+                                medium: article.medium,
+                                dimensions: article.dimensions,
+                                location: article.location
+                            }).replace(/'/g, "&#39;")}'
                             title="Edit"
                         >
                             <img src="https://img.icons8.com/ios-glyphs/20/00cc00/pencil--v1.png" alt="Edit">
@@ -356,6 +371,84 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Initial art fields visibility based on current category
                 toggleArtFields(articleData.category__name);
+
+                // Add publish button click handler
+                const publishBtn = modal.querySelector('.publish-btn');
+                publishBtn.onclick = async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = {
+                        id: articleData.id,
+                        title: modal.querySelector('input[name="title"]').value,
+                        about: modal.querySelector('textarea').value,
+                        category: modal.querySelector('select[name="category"]').value,
+                        type: modal.querySelector('select[name="type"]').value,
+                        born: modal.querySelector('input[name="born"]').value,
+                        died: modal.querySelector('input[name="died"]').value,
+                        nationality: modal.querySelector('input[name="nationality"]').value,
+                        known_for: modal.querySelector('input[name="known_for"]').value,
+                        notable_work: modal.querySelector('input[name="notable_work"]').value,
+                        year: modal.querySelector('input[name="year"]').value,
+                        medium: modal.querySelector('input[name="medium"]').value,
+                        dimensions: modal.querySelector('input[name="dimensions"]').value,
+                        location: modal.querySelector('input[name="location"]').value
+                    };
+
+                    console.log('Article Data:', articleData);
+                    console.log('Form Data being sent:', formData);
+
+                    // Validate required fields
+                    if (!formData.title || !formData.about || !formData.category || !formData.type) {
+                        alert('Please fill in all required fields (Title, Content, Category, and Type)');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/update-article/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCsrfToken(),
+                            },
+                            body: JSON.stringify(formData)
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            console.error('Server Error:', errorData);
+                            throw new Error(`Server Error: ${errorData.error}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.success) {
+                            closeModal();
+                            window.location.reload();
+                        } else {
+                            console.error('Failed to update article:', result.error);
+                            alert('Failed to update article: ' + result.error);
+                        }
+                    } catch (error) {
+                        console.error('Error updating article:', error);
+                        alert('Error updating article: ' + error.message);
+                    }
+                };
+
+                // Helper function to get CSRF token
+                const getCsrfToken = () => {
+                    const name = 'csrftoken';
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                };
             }
         });
     } catch (error) {

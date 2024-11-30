@@ -30,9 +30,11 @@ def index(request):
 
     # Fetch all articles and their related categories
     articles = list(Article.objects.values(
+        'id',
         'title', 'born', 'died', 'nationality', 'developer',
         'known_for', 'notable_work', 'location', 'about',
-        'dimensions', 'designed_by', 'type__name', 'category__name', 'category_id'
+        'dimensions', 'designed_by', 'type__name', 'category__name', 'category_id',
+        'year', 'medium'
     ))
 
     # Serialize the articles data to JSON
@@ -323,5 +325,78 @@ def delete_article(request):
     return JsonResponse({
         "status": "error", 
         "message": "Invalid request method."
+    }, status=405)
+
+@csrf_exempt
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=["Admin", "Tutor"]).exists())
+def update_article(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            print("Received data:", data)  # Debug print
+            
+            article_id = data.get('id')
+            if not article_id:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Article ID is required'
+                }, status=400)
+
+            # Check if article exists
+            try:
+                article = Article.objects.get(id=article_id)
+            except Article.DoesNotExist:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Article with ID {article_id} not found'
+                }, status=404)
+
+            # Validate required fields
+            required_fields = ['title', 'about', 'category', 'type']
+            missing_fields = [field for field in required_fields if not data.get(field)]
+            if missing_fields:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Missing required fields: {", ".join(missing_fields)}'
+                }, status=400)
+
+            # Update article fields
+            article.title = data.get('title', article.title)
+            article.about = data.get('about', article.about)
+            article.category_id = data.get('category', article.category_id)
+            article.type_id = data.get('type', article.type_id)
+            article.born = data.get('born', article.born)
+            article.died = data.get('died', article.died)
+            article.nationality = data.get('nationality', article.nationality)
+            article.known_for = data.get('known_for', article.known_for)
+            article.notable_work = data.get('notable_work', article.notable_work)
+            article.year = data.get('year', article.year)
+            article.medium = data.get('medium', article.medium)
+            article.dimensions = data.get('dimensions', article.dimensions)
+            article.location = data.get('location', article.location)
+            
+            article.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Article updated successfully'
+            })
+            
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid JSON data'
+            }, status=400)
+        except Exception as e:
+            print("Error updating article:", str(e))  # Debug print
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({
+        'success': False,
+        'error': 'Invalid request method'
     }, status=405)
 
