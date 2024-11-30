@@ -142,7 +142,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     ${showActions ? `
                     <div class="content-actions">
-                        <button class="action-button edit-article-btn" title="Edit">
+                        <button 
+                            class="action-button edit-article-btn" 
+                            data-article='${JSON.stringify(article).replace(/'/g, "&#39;")}'
+                            title="Edit"
+                        >
                             <img src="https://img.icons8.com/ios-glyphs/20/00cc00/pencil--v1.png" alt="Edit">
                         </button>
                         <button 
@@ -209,9 +213,16 @@ document.addEventListener('DOMContentLoaded', function () {
             if (editBtn) {
                 console.log("Edit button clicked"); // Debug log
                 
+                // Get the article data
+                const articleData = JSON.parse(editBtn.dataset.article);
+                console.log("Article data:", articleData); // Debug log
+                
                 // Get modal elements
-                const modal = document.getElementById('addArticleModal');
-                console.log("Modal found:", modal); // Debug log
+                const modal = document.getElementById('editArticleModal');
+                const mainContent = document.querySelector('.main-content');
+                const categorySelect = modal.querySelector('select[name="category"]');
+                const typeSelect = modal.querySelector('select[name="type"]');
+                const discardBtn = modal.querySelector('.discard-btn');
 
                 if (!modal) {
                     console.error("Modal element not found!");
@@ -226,9 +237,66 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
-                // Show modal and overlay with opacity transition
+                // Function to close modal
+                const closeModal = () => {
+                    modal.style.opacity = '0';
+                    overlay.style.opacity = '0';
+                    mainContent.classList.remove('blur');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }, 300);
+                };
+
+                // Populate form fields with article data
+                modal.querySelector('textarea').value = articleData.about || '';
+                modal.querySelector('input[name="title"]').value = articleData.title || '';
+                modal.querySelector('input[name="born"]').value = articleData.born || '';
+                modal.querySelector('input[name="died"]').value = articleData.died || '';
+                modal.querySelector('input[name="nationality"]').value = articleData.nationality || '';
+                modal.querySelector('input[name="known_for"]').value = articleData.known_for || '';
+                modal.querySelector('input[name="notable_work"]').value = articleData.notable_work || '';
+                modal.querySelector('input[name="year"]').value = articleData.year || '';
+                modal.querySelector('input[name="medium"]').value = articleData.medium || '';
+                modal.querySelector('input[name="dimensions"]').value = articleData.dimensions || '';
+                modal.querySelector('input[name="location"]').value = articleData.location || '';
+
+                // Fix category population
+                fetch('/get-categories/')
+                    .then(response => response.json())
+                    .then(data => {
+                        categorySelect.innerHTML = '<option value="">Select category</option>';
+                        data.forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category.id;
+                            option.textContent = category.name;
+                            if (category.name === articleData.category__name) {
+                                option.selected = true;
+                                // Trigger type population for the selected category
+                                fetch(`/get-types/${category.id}/`)
+                                    .then(response => response.json())
+                                    .then(types => {
+                                        typeSelect.innerHTML = '<option value="">Select type</option>';
+                                        types.forEach(type => {
+                                            const option = document.createElement('option');
+                                            option.value = type.id;
+                                            option.textContent = type.name;
+                                            if (type.name === articleData.type__name) {
+                                                option.selected = true;
+                                            }
+                                            typeSelect.appendChild(option);
+                                        });
+                                        typeSelect.disabled = false;
+                                    });
+                            }
+                            categorySelect.appendChild(option);
+                        });
+                    });
+
+                // Show modal and overlay with opacity transition and blur
                 overlay.style.display = 'block';
                 modal.style.display = 'block';
+                mainContent.classList.add('blur');
                 
                 // Force reflow
                 modal.offsetHeight;
@@ -237,15 +305,57 @@ document.addEventListener('DOMContentLoaded', function () {
                 overlay.style.opacity = '1';
                 modal.style.opacity = '1';
                 
-                // Handle overlay click to close modal
-                overlay.onclick = () => {
-                    modal.style.opacity = '0';
-                    overlay.style.opacity = '0';
-                    setTimeout(() => {
-                        modal.style.display = 'none';
-                        overlay.style.display = 'none';
-                    }, 300);
+                // Handle discard button click
+                discardBtn.onclick = (e) => {
+                    e.preventDefault();
+                    closeModal();
                 };
+                
+                // Handle overlay click to close modal
+                overlay.onclick = closeModal;
+
+                // Add this function to handle art fields visibility
+                const toggleArtFields = (categoryName) => {
+                    const artFields = modal.querySelector('.art-specific-fields');
+                    if (categoryName === 'Arts') {
+                        artFields.style.display = 'block';
+                    } else {
+                        artFields.style.display = 'none';
+                    }
+                };
+
+                // Update the category change handler
+                categorySelect.onchange = function() {
+                    const selectedCategoryId = this.value;
+                    const selectedOption = this.options[this.selectedIndex];
+                    const categoryName = selectedOption.textContent;
+                    
+                    toggleArtFields(categoryName);
+
+                    if (selectedCategoryId) {
+                        fetch(`/get-types/${selectedCategoryId}/`)
+                            .then(response => response.json())
+                            .then(data => {
+                                typeSelect.innerHTML = '<option value="">Select type</option>';
+                                data.forEach(type => {
+                                    const option = document.createElement('option');
+                                    option.value = type.id;
+                                    option.textContent = type.name;
+                                    if (type.name === articleData.type__name) {
+                                        option.selected = true;
+                                    }
+                                    typeSelect.appendChild(option);
+                                });
+                                typeSelect.disabled = false;
+                            });
+                    } else {
+                        typeSelect.innerHTML = '<option value="">Type (sub category)</option>';
+                        typeSelect.disabled = true;
+                    }
+                };
+
+                // Initial art fields visibility based on current category
+                toggleArtFields(articleData.category__name);
             }
         });
     } catch (error) {

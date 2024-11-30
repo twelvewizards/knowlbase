@@ -331,6 +331,55 @@
         </div>
     </div>
 
+    <!-- Edit Article Modal -->
+    <div class="add-article-modal" id="editArticleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editing Article</h2>
+                <button type="button" class="close-button">&times;</button>
+            </div>
+            <form class="add-article-form">
+                <textarea 
+                    class="article-text-area" 
+                    name="about" 
+                    placeholder="Write article here..."
+                ></textarea>
+                <div class="article-details">
+                    <div class="dropdown-group">
+                        <select name="category" id="editCategory">
+                            <option value="">Select category</option>
+                        </select>
+                        <select name="type" id="editType" disabled>
+                            <option value="">Type (sub category)</option>
+                        </select>
+                    </div>
+                    <div class="fields-container">
+                        <input type="text" name="title" placeholder="Name/Title">
+                        <div class="inline-fields">
+                            <input type="text" name="born" placeholder="Born (m/d/y)">
+                            <input type="text" name="died" placeholder="Died (m/d/y)">
+                            <input type="text" name="nationality" placeholder="Nationality">
+                        </div>
+                        <input type="text" name="known_for" placeholder="Known For">
+                        <input type="text" name="notable_work" placeholder="Notable Work">
+                        <div class="art-specific-fields" style="display: none;">
+                            <div class="inline-fields">
+                                <input type="text" name="year" placeholder="Year">
+                                <input type="text" name="medium" placeholder="Medium">
+                                <input type="text" name="dimensions" placeholder="Dimensions">
+                                <input type="text" name="location" placeholder="Location">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <button type="button" class="discard-btn">Discard Changes</button>
+                        <button type="submit" class="publish-btn">Publish</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
         
 
 
