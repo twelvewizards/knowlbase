@@ -222,3 +222,52 @@ input[name="notable_work"] {
 [data-category="Arts"] .bottom-fields {
     margin: 8px 0;
 }
+
+/* Update button styles */
+.add-article-modal .button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.add-article-modal .publish-btn,
+.add-article-modal .discard-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    height: 32px;
+    line-height: 14px; /* Match font size */
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-article-modal .discard-btn {
+    background-color: #dc3545;
+}
+
+.add-article-modal .publish-btn:hover {
+    background-color: #0056b3;
+}
+
+.add-article-modal .discard-btn:hover {
+    background-color: #c82333;
+}
+
+/* Art-specific fields styling */
+.art-specific-fields {
+    margin-top: 8px;
+}
+
+.art-specific-fields .inline-fields {
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns for art fields */
+}
