@@ -1,17 +1,16 @@
 /* Filter section container */
 .filter-section {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
+    align-items: center; /* Vertically center elements */
+    justify-content: space-between; /* Space out filters and search bar */
+    gap: 10px; /* Add space between elements */
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
 }
 
-/* Filter components container */
 .filter-components {
     display: flex;
     align-items: center;
+    gap: 10px; /* Add space between filters */
 }
 
 /* Category filters container */

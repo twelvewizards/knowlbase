@@ -72,6 +72,7 @@
         
                 <!-- Filter and search -->
                 <div class="filter-section">
+                    <!-- Filters -->
                     <div class="filter-components">
                         <div class="category-filters">
                             <label class="filter-option art">
@@ -88,7 +89,7 @@
                             </label>
                         </div>
                     </div>
-        
+                
                     <!-- Search bar -->
                     <div class="search-container">
                         <form method="GET" action="{% url 'search_articles' %}">
@@ -98,18 +99,19 @@
                             </button>
                         </form>
                     </div>
+                </div>
         
                 <!-- Articles -->
                 <div class="article-buttons-container">
-                    {% for article in articles %}
-                        <button class="article-button 
-                            {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}">
-                            {{ article.title }}
-                        </button>
-                    {% endfor %}
-                    {% if user_authenticated and user_role in "Admin,Tutor" %}
-                        <button class="article-button add-new">+ Add new</button>
-                    {% endif %}
+                        {% for article in articles %}
+                            <button class="article-button 
+                                {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}">
+                                {{ article.title }}
+                            </button>
+                        {% endfor %}
+                        {% if user_authenticated and user_role in "Admin,Tutor" %}
+                            <button class="article-button add-new">+ Add new</button>
+                        {% endif %}
                 </div>
                           
             </main>
@@ -385,9 +387,11 @@
 
 
     <!-- Embed the articles JSON data in a <script> tag -->
-    <script id="articlesData" type="application/json">
-        {{ articles_json|safe }}
-    </script>
+        {% if articles_json %}
+        <script id="articlesData" type="application/json">
+            {{ articles_json|safe }}
+        </script>
+        {% endif %}
     <script>
         const showLoginModal = "{{ show_login_modal|default:'False'|lower }}" === "true";
         const showSignupModal = "{{ show_signup_modal|default:'False'|lower }}" === "true";

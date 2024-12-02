@@ -1,0 +1,21 @@
+{% extends 'knowl/base.html' %}
+
+{% block content %}
+    <h2>Search Results{% if query %} for "{{ query }}"{% endif %}</h2>
+
+    <div class="article-buttons-container">
+        {% if articles %}
+            {% for article in articles %}
+                <button class="article-button" data-article-id="{{ article.id }}">
+                    {{ article.title }}
+                </button>
+            {% endfor %}
+        {% else %}
+            <p>No articles found matching your query.</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+<script id="articlesData" type="application/json">
+    {{ articles_json|safe }}
+</script>

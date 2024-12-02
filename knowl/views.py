@@ -412,19 +412,14 @@ def search_articles(request):
             Q(about__icontains=query) |
             Q(known_for__icontains=query) |
             Q(notable_work__icontains=query)
-            
         )
 
- 
-    articles_list = list(articles.values(
-        'id',
-        'title', 'about', 'category__name', 'category_id',
-        
-    ))
-
+    # Serialize articles to JSON
+    articles_list = list(articles.values())
     articles_json = json.dumps(articles_list, cls=DjangoJSONEncoder)
 
     context = {
+        'articles': articles,
         'articles_json': articles_json,
         'query': query,
         'user_authenticated': request.user.is_authenticated,
