@@ -103,15 +103,17 @@
         
                 <!-- Articles -->
                 <div class="article-buttons-container">
-                        {% for article in articles %}
-                            <button class="article-button 
-                                {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}">
-                                {{ article.title }}
-                            </button>
-                        {% endfor %}
-                        {% if user_authenticated and user_role in "Admin,Tutor" %}
-                            <button class="article-button add-new">+ Add new</button>
-                        {% endif %}
+                    {% for article in articles %}
+                        <button class="article-button 
+                            {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}"
+                            data-article-id="{{ article.id }}"
+                        >
+                            {{ article.title }}
+                        </button>
+                    {% endfor %}
+                    {% if user_authenticated and user_role in "Admin,Tutor" %}
+                        <button class="article-button add-new">+ Add new</button>
+                    {% endif %}
                 </div>
                           
             </main>

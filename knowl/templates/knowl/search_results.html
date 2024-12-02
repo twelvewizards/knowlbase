@@ -14,8 +14,9 @@
             <p>No articles found matching your query.</p>
         {% endif %}
     </div>
-{% endblock %}
 
-<script id="articlesData" type="application/json">
-    {{ articles_json|safe }}
-</script>
+    <!-- Embed the articles JSON data -->
+    <script id="articlesData" type="application/json">
+        {{ articles_json|safe }}
+    </script>
+{% endblock %}
