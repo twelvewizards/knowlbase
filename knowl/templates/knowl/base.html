@@ -91,12 +91,13 @@
         
                     <!-- Search bar -->
                     <div class="search-container">
-                        <input type="text" class="search-bar" placeholder="Search...">
-                        <button class="search-btn">
-                            <img src="https://img.icons8.com/ios-filled/24/000000/search.png" alt="Search Icon">
-                        </button>
+                        <form method="GET" action="{% url 'search_articles' %}">
+                            <input type="text" name="q" class="search-bar" placeholder="Search..." value="{{ request.GET.q }}">
+                            <button type="submit" class="search-btn">
+                                <img src="https://img.icons8.com/ios-filled/24/000000/search.png" alt="Search Icon">
+                            </button>
+                        </form>
                     </div>
-                </div>
         
                 <!-- Articles -->
                 <div class="article-buttons-container">
