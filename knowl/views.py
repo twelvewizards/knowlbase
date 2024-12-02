@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q
 import json
 from .models import Article, Category, Type
 
@@ -400,3 +401,44 @@ def update_article(request):
         'error': 'Invalid request method'
     }, status=405)
 
+# search view
+def search_articles(request):
+    query = request.GET.get('q', '')
+    articles = Article.objects.all()
+
+    if query:
+        articles = articles.filter(
+            Q(title__icontains=query) |
+            Q(about__icontains=query) |
+            Q(known_for__icontains=query) |
+            Q(notable_work__icontains=query)
+            
+        )
+
+ 
+    articles_list = list(articles.values(
+        'id',
+        'title', 'about', 'category__name', 'category_id',
+        
+    ))
+
+    articles_json = json.dumps(articles_list, cls=DjangoJSONEncoder)
+
+    context = {
+        'articles_json': articles_json,
+        'query': query,
+        'user_authenticated': request.user.is_authenticated,
+        'user_role': get_user_role(request.user),
+    }
+
+    return render(request, 'knowl/search_results.html', context)
+
+def get_user_role(user):
+    if user.is_authenticated:
+        if user.groups.filter(name="Admin").exists():
+            return "Admin"
+        elif user.groups.filter(name="Tutor").exists():
+            return "Tutor"
+        else:
+            return "Student"
+    return None
