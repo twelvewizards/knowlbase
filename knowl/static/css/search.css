@@ -1,40 +1,60 @@
 /* Search bar container */
 .search-container {
+    display: inline-flex;
+    align-items: center;
+    margin: 20px 20px;
+}
+
+/* Style for the search form */
+.search-form {
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Align to the right */
-    height: 34px; /* Increased to match new filter button height */
 }
 
 /* Style for the search input field */
 .search-bar {
-    width: 350px; /* Increased from 300px */
-    padding: 6px 14px; /* Adjusted to match filter height */
+    height: 36px;
+    padding: 0 12px;
     border: 1px solid #ccc;
-    border-radius: 8px 0 0 8px; /* Slightly reduced border radius */
-    font-size: 14px; /* Increased to match filter text */
+    border-radius: 8px 0 0 8px;
+    font-size: 14px;
     outline: none;
-    font-family: 'Public Sans', sans-serif;
-    height: 100%; /* Fill the container height */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    background-color: white;
+    color: #333;
+    width: 300px;
+    box-sizing: border-box;
 }
 
-/* Style for the search button */
+.search-bar:focus {
+    border-color: #0066cc;
+}
+
+/* Search button styling */
 .search-btn {
-    background-color: white;
+    height: 36px;
+    padding: 0 12px;
     border: 1px solid #ccc;
     border-left: none;
-    border-radius: 0 8px 8px 0; /* Slightly reduced border radius */
-    padding: 6px 14px; /* Adjusted to match filter height */
+    border-radius: 0 8px 8px 0;
+    background-color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%; /* Fill the container height */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    box-sizing: border-box;
 }
 
-.search-btn img {
-    width: 18px; /* Slightly increased */
-    height: 18px; /* Slightly increased */
+.search-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Search icon styling */
+.search-btn svg {
+    width: 16px;
+    height: 16px;
+    color: #666; /* Icon color */
+}
+
+.search-btn:hover svg {
+    color: #333; /* Darker color on hover */
 }

@@ -13,4 +13,5 @@ urlpatterns = [
     path('get-types/<int:category_id>/', views.get_types, name='get_types'),
     path('delete-article/', views.delete_article, name='delete_article'),
     path('update-article/', views.update_article, name='update_article'),
+    path('search/', views.search_articles, name='search_articles'),
 ]
