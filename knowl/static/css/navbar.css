@@ -91,14 +91,40 @@
 }
 
 /* Settings icon style */
-.settings-icon img {
-    width: 24px;
-    height: 24px;
-    margin-left: 20px;
-    transition: filter 0.3s ease; /* Add smooth transition for hover effect */
+.settings-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
 
-/* Hover effect for Settings icon - make it darker */
-.settings-icon:hover img {
-    filter: brightness(0.8); /* Make the icon slightly darker on hover */
+.settings-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    transition: transform 0.3s ease;
+}
+
+.settings-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.settings-icon:hover svg {
+    transform: rotate(30deg);
+}
+
+/* Logo link styling */
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-link:hover {
+    opacity: 0.8;
 }
