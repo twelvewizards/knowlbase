@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Q
+from django.core.serializers import serialize
 import json
 from .models import Article, Category, Type
 
@@ -405,7 +406,6 @@ def update_article(request):
 def search_articles(request):
     query = request.GET.get('q', '')
     articles = Article.objects.all()
-
     if query:
         articles = articles.filter(
             Q(title__icontains=query) |
@@ -413,26 +413,26 @@ def search_articles(request):
             Q(known_for__icontains=query) |
             Q(notable_work__icontains=query)
         )
-
+    
     # Get user role
     user_role = get_user_role(request.user)
-
-    # Serialize articles with all necessary fields
-    articles = list(articles.values(
+    
+    # Serialize articles for JSON
+    articles_data = list(articles.values(
         'id', 'title', 'about', 'notable_work', 'year', 
         'medium', 'dimensions', 'location', 'born', 'died',
         'nationality', 'known_for', 'designed_by', 'developer',
         'category__name', 'type__name', 'category_id'
     ))
     
-    articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
-
+    articles_json = json.dumps(articles_data, cls=DjangoJSONEncoder)
+    
     context = {
-        'articles_json': articles_json,
+        'articles': articles,  # Pass the queryset for template rendering
+        'articles_json': articles_json,  # Pass JSON for JavaScript
         'user_authenticated': request.user.is_authenticated,
         'user_role': user_role,
     }
-
     return render(request, 'knowl/base.html', context)
 
 def get_user_role(user):

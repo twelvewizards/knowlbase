@@ -98,7 +98,7 @@
                     <!-- Search bar -->
                     <form action="{% url 'search_articles' %}" method="GET" class="search-form">
                         <div class="search-container">
-                            <input type="text" name="q" class="search-bar" placeholder="Search...">
+                            <input type="text" name="q" class="search-bar" placeholder="Search..." required>
                             <button type="submit" class="search-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="11" cy="11" r="8"></circle>
@@ -112,14 +112,16 @@
         
                 <!-- Articles -->
                 <div class="article-buttons-container">
-                    {% for article in articles %}
-                        <button class="article-button 
-                            {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}"
-                            data-article-id="{{ article.id }}"
-                        >
-                            {{ article.title }}
-                        </button>
-                    {% endfor %}
+                    {% if articles %}
+                        {% for article in articles %}
+                            <button class="article-button 
+                                {% if article.category_id == 1 %}art{% elif article.category_id == 2 %}mathematics{% elif article.category_id == 3 %}technology{% endif %}"
+                                data-article-id="{{ article.id }}"
+                            >
+                                {{ article.title }}
+                            </button>
+                        {% endfor %}
+                    {% endif %}
                     {% if user_authenticated and user_role in "Admin,Tutor" %}
                         <button class="article-button add-new">+ Add new</button>
                     {% endif %}
