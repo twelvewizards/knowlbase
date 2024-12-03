@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'KnowlBase',  
         'USER': 'postgres',       
-        'PASSWORD': 'password',   
+        'PASSWORD': 'postpass',   
         'HOST': 'localhost',             
         'PORT': '5432',                  
     }

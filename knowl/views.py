@@ -414,19 +414,26 @@ def search_articles(request):
             Q(notable_work__icontains=query)
         )
 
-    # Serialize articles to JSON
-    articles_list = list(articles.values())
-    articles_json = json.dumps(articles_list, cls=DjangoJSONEncoder)
+    # Get user role
+    user_role = get_user_role(request.user)
+
+    # Serialize articles with all necessary fields
+    articles = list(articles.values(
+        'id', 'title', 'about', 'notable_work', 'year', 
+        'medium', 'dimensions', 'location', 'born', 'died',
+        'nationality', 'known_for', 'designed_by', 'developer',
+        'category__name', 'type__name', 'category_id'
+    ))
+    
+    articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
 
     context = {
-        'articles': articles,
         'articles_json': articles_json,
-        'query': query,
         'user_authenticated': request.user.is_authenticated,
-        'user_role': get_user_role(request.user),
+        'user_role': user_role,
     }
 
-    return render(request, 'knowl/search_results.html', context)
+    return render(request, 'knowl/base.html', context)
 
 def get_user_role(user):
     if user.is_authenticated:

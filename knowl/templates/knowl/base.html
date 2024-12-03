@@ -35,21 +35,19 @@
             <header>
                 <nav class="navbar">
                     <div class="navbar-left">
-                        <a href="{% url 'index' %}" class="logo">KnowlBase</a>
-                        <a href="#" class="nav-link">Home</a>
+                        <h1 class="logo">KnowlBase</h1>
+                        <a href="{% url 'index' %}" class="nav-link">Home</a>
                     </div>
                     <div class="navbar-right">
                         {% if user.is_authenticated %}
-                            <span class="welcome-message">Welcome, {{ user.username }}</span>
-                            <a href="{% url 'user_logout' %}" class="logout-btn">Log out</a>
-                            {% if user_role in "Admin,Tutor" %}
-                                <a href="#" class="settings-icon">
-                                    <img src="https://img.icons8.com/ios-filled/50/ffffff/settings.png" alt="Settings">
-                                </a>
+                            <span class="welcome-text">Welcome, {{ user.email }}</span>
+                            {% if user.groups.all.0.name == "Admin" %}
+                                <img src="{% static 'images/settings.png' %}" alt="Settings" class="settings-icon">
                             {% endif %}
+                            <a href="{% url 'user_logout' %}" class="logout-btn">Log out</a>
                         {% else %}
-                            <a href="#" class="login-btn">Log in</a>
-                            <a href="#" class="signup-btn">Sign up</a>
+                            <button class="login-btn">Log in</button>
+                            <button class="signup-btn">Sign up</button>
                         {% endif %}
                     </div>
                 </nav>
@@ -91,14 +89,18 @@
                     </div>
                 
                     <!-- Search bar -->
-                    <div class="search-container">
-                        <form method="GET" action="{% url 'search_articles' %}">
-                            <input type="text" name="q" class="search-bar" placeholder="Search..." value="{{ request.GET.q }}">
+                    <form action="{% url 'search_articles' %}" method="GET" class="search-form">
+                        <div class="search-container">
+                            <input type="text" name="q" class="search-bar" placeholder="Search...">
                             <button type="submit" class="search-btn">
-                                <img src="https://img.icons8.com/ios-filled/24/000000/search.png" alt="Search Icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
+                    
                 </div>
         
                 <!-- Articles -->

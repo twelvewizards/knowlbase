@@ -18,7 +18,7 @@
 .navbar-right {
     display: flex;
     align-items: center;
-    padding-top: 2px;  /* Adjust this value to move the buttons up */
+    gap: 15px;
 }
 
 /* Black weight for Know4Base logo */
