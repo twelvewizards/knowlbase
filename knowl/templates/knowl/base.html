@@ -419,5 +419,46 @@
             toggleManageUsersModal(true);
         });
     </script>
+    <script>
+    document.querySelector('.search-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const searchQuery = this.querySelector('input[name="q"]').value;
+        const response = await fetch(`{% url 'search_articles' %}?q=${encodeURIComponent(searchQuery)}`);
+        const data = await response.json();
+        
+        // Get the container where articles are displayed
+        const articleContainer = document.querySelector('.article-buttons-container');
+        
+        // Clear existing articles
+        articleContainer.innerHTML = '';
+        
+        // Add search results
+        data.forEach(article => {
+            const button = document.createElement('button');
+            button.className = `article-button ${getCategoryClass(article.category_id)}`;
+            button.setAttribute('data-article-id', article.id);
+            button.textContent = article.title;
+            articleContainer.appendChild(button);
+        });
+        
+        // If admin/tutor, add the "Add new" button back
+        if (document.body.dataset.role === 'Admin' || document.body.dataset.role === 'Tutor') {
+            const addNewButton = document.createElement('button');
+            addNewButton.className = 'article-button add-new';
+            addNewButton.textContent = '+ Add new';
+            articleContainer.appendChild(addNewButton);
+        }
+    });
+
+    function getCategoryClass(categoryId) {
+        switch (categoryId) {
+            case 1: return 'art';
+            case 2: return 'mathematics';
+            case 3: return 'technology';
+            default: return '';
+        }
+    }
+    </script>
 </body>
 </html>

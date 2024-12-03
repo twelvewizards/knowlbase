@@ -404,36 +404,8 @@ def update_article(request):
 # search view
 def search_articles(request):
     query = request.GET.get('q', '')
-    articles = Article.objects.all()
-
-    if query:
-        articles = articles.filter(
-            Q(title__icontains=query) |
-            Q(about__icontains=query) |
-            Q(known_for__icontains=query) |
-            Q(notable_work__icontains=query)
-        )
-
-    # Get user role
-    user_role = get_user_role(request.user)
-
-    # Serialize articles with all necessary fields
-    articles = list(articles.values(
-        'id', 'title', 'about', 'notable_work', 'year', 
-        'medium', 'dimensions', 'location', 'born', 'died',
-        'nationality', 'known_for', 'designed_by', 'developer',
-        'category__name', 'type__name', 'category_id'
-    ))
-    
-    articles_json = json.dumps(articles, cls=DjangoJSONEncoder)
-
-    context = {
-        'articles_json': articles_json,
-        'user_authenticated': request.user.is_authenticated,
-        'user_role': user_role,
-    }
-
-    return render(request, 'knowl/base.html', context)
+    articles = Article.objects.filter(title__icontains=query).values('id', 'title', 'category_id')
+    return JsonResponse(list(articles), safe=False)
 
 def get_user_role(user):
     if user.is_authenticated:
