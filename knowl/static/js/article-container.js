@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${showActions ? `
                     <div class="content-actions">
                         <button 
-                            class="action-button edit-article-btn" 
+                            class="action-button edit-btn" 
                             data-article='${JSON.stringify({
                                 id: article.id,
                                 title: article.title,

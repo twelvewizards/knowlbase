@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         body: document.body,
         showPasswordBtns: document.querySelectorAll('.show-password-btn'),
         passwordInputs: document.querySelectorAll('input[type="password"]'),
+        editArticleModal: document.getElementById('editArticleModal'),
     };
 
     const userAuthenticated = elements.body.dataset.authenticated === 'True';
@@ -406,6 +407,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target === elements.overlay && removeArticleModal.style.display === 'block') {
             closeRemoveArticleModal();
         }
+
+        const editBtn = event.target.closest('.edit-btn');
+        if (editBtn || event.target.matches('img[alt="Edit"]')) {
+            const button = editBtn || event.target.closest('.edit-btn');
+            const articleData = JSON.parse(button.dataset.article);
+            console.log('Edit button clicked for article:', articleData);
+            openEditArticleModal(articleData);
+        }
     });
 
     // Cancel button closes the modal
@@ -451,5 +460,135 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial Fetch Users
     fetchUsers();
+
+    // Open Edit Article Modal
+    function openEditArticleModal(articleData) {
+        console.log('Opening edit article modal for:', articleData);
+        elements.overlay.style.display = 'block';
+        elements.editArticleModal.style.display = 'block';
+        elements.mainContent.classList.add('blur');
+        
+        // Populate all fields
+        const modal = elements.editArticleModal;
+        modal.querySelector('input[name="title"]').value = articleData.title || '';
+        modal.querySelector('textarea[name="about"]').value = articleData.about || '';
+        modal.querySelector('input[name="born"]').value = articleData.born || '';
+        modal.querySelector('input[name="died"]').value = articleData.died || '';
+        modal.querySelector('input[name="nationality"]').value = articleData.nationality || '';
+        modal.querySelector('input[name="known_for"]').value = articleData.known_for || '';
+        modal.querySelector('input[name="notable_work"]').value = articleData.notable_work || '';
+        modal.querySelector('input[name="year"]').value = articleData.year || '';
+        modal.querySelector('input[name="medium"]').value = articleData.medium || '';
+        modal.querySelector('input[name="dimensions"]').value = articleData.dimensions || '';
+        modal.querySelector('input[name="location"]').value = articleData.location || '';
+
+        // Set category and populate types
+        const categorySelect = modal.querySelector('select[name="category"]');
+        const typeSelect = modal.querySelector('select[name="type"]');
+        
+        // Fetch categories and types
+        fetch('/get-categories/')
+            .then(response => response.json())
+            .then(categories => {
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                categories.forEach(category => {
+                    const option = new Option(category.name, category.id);
+                    categorySelect.add(option);
+                    if (category.name === articleData.category__name) {
+                        option.selected = true;
+                        // Fetch types for this category
+                        fetch(`/get-types/${category.id}/`)
+                            .then(response => response.json())
+                            .then(types => {
+                                typeSelect.innerHTML = '<option value="">Select Type</option>';
+                                types.forEach(type => {
+                                    const typeOption = new Option(type.name, type.id);
+                                    typeSelect.add(typeOption);
+                                    if (type.name === articleData.type__name) {
+                                        typeOption.selected = true;
+                                    }
+                                });
+                            });
+                    }
+                });
+            });
+
+        // Add submit handler
+        const form = modal.querySelector('form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            console.log('Submitting edit form');
+
+            const formData = {
+                id: articleData.id,
+                title: modal.querySelector('input[name="title"]').value,
+                about: modal.querySelector('textarea[name="about"]').value,
+                category: modal.querySelector('select[name="category"]').value,
+                type: modal.querySelector('select[name="type"]').value,
+                born: modal.querySelector('input[name="born"]').value,
+                died: modal.querySelector('input[name="died"]').value,
+                nationality: modal.querySelector('input[name="nationality"]').value,
+                known_for: modal.querySelector('input[name="known_for"]').value,
+                notable_work: modal.querySelector('input[name="notable_work"]').value,
+                year: modal.querySelector('input[name="year"]').value,
+                medium: modal.querySelector('input[name="medium"]').value,
+                dimensions: modal.querySelector('input[name="dimensions"]').value,
+                location: modal.querySelector('input[name="location"]').value
+            };
+
+            try {
+                const response = await fetch('/update-article/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    closeEditArticleModal();
+                    window.location.reload();
+                } else {
+                    console.error('Failed to update article:', result.error);
+                    alert('Failed to update article: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error updating article:', error);
+                alert('Error updating article: ' + error.message);
+            }
+        };
+
+        setTimeout(() => {
+            elements.overlay.style.opacity = '1';
+            elements.editArticleModal.style.opacity = '1';
+        }, 10);
+    }
+
+    // Add close function
+    function closeEditArticleModal() {
+        const modal = elements.editArticleModal;
+        modal.style.opacity = '0';
+        elements.overlay.style.opacity = '0';
+        elements.mainContent.classList.remove('blur');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            elements.overlay.style.display = 'none';
+        }, 300);
+    }
+
+    // Update event listeners
+    document.body.addEventListener('click', (event) => {
+        // ... existing click handlers ...
+        
+        // Close modal when clicking overlay
+        if (event.target === elements.overlay) {
+            closeEditArticleModal();
+        }
+    });
+
+    // Add close button handler
+    elements.editArticleModal?.querySelector('.close-button')?.addEventListener('click', closeEditArticleModal);
 
 });

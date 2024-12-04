@@ -24,6 +24,40 @@
     <script defer src="{% static 'js/article-container.js' %}"></script>
     <script defer src="{% static 'js/modal.js' %}"></script>
     <script defer src="{% static 'js/add-article.js' %}"></script>
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .modal.active {
+            display: block;
+        }
+    </style>
 </head>
 <body 
         class="{% if user.is_authenticated %}authenticated{% else %}guest{% endif %}" 
@@ -460,5 +494,81 @@
         }
     }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle edit button clicks
+            document.addEventListener('click', function(e) {
+                const editButton = e.target.closest('.edit-btn');
+                if (editButton || e.target.matches('img[alt="Edit"]')) {
+                    console.log('Edit button clicked');
+                    const button = editButton || e.target.closest('.edit-btn');
+                    const articleData = JSON.parse(button.dataset.article);
+                    console.log('Article data:', articleData);
+
+                    const modal = document.getElementById('editArticleModal');
+                    const overlay = document.getElementById('overlay');
+
+                    if (modal && overlay) {
+                        console.log('Found modal and overlay');
+                        // Populate modal fields
+                        modal.querySelector('input[name="title"]').value = articleData.title || '';
+                        modal.querySelector('textarea[name="about"]').value = articleData.about || '';
+                        
+                        // Show modal and overlay
+                        modal.style.cssText = 'display: block !important';
+                        overlay.style.cssText = 'display: block !important';
+                        
+                        console.log('Modal display:', modal.style.display);
+                        console.log('Modal visibility:', modal.style.visibility);
+                        console.log('Modal computed style:', window.getComputedStyle(modal).display);
+                    } else {
+                        console.error('Modal or overlay not found');
+                    }
+                }
+            });
+
+            // Handle close button clicks
+            document.querySelectorAll('#editArticleModal .close-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const modal = document.getElementById('editArticleModal');
+                    const overlay = document.getElementById('overlay');
+                    modal.style.display = 'none';
+                    overlay.style.display = 'none';
+                });
+            });
+        });
+    </script>
+    <div class="modal-overlay" id="overlay"></div>
+
+    <div class="modal" id="editArticleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Article</h2>
+                <button type="button" class="close-button">&times;</button>
+            </div>
+            <form class="add-article-form">
+                <input type="text" name="title" placeholder="Title" required>
+                <textarea class="article-text-area" name="about" placeholder="Write article here..." required></textarea>
+                <select name="category" required>
+                    <option value="">Select Category</option>
+                </select>
+                <select name="type" required>
+                    <option value="">Select Type</option>
+                </select>
+                <input type="text" name="born" placeholder="Born">
+                <input type="text" name="died" placeholder="Died">
+                <input type="text" name="nationality" placeholder="Nationality">
+                <input type="text" name="known_for" placeholder="Known For">
+                <input type="text" name="notable_work" placeholder="Notable Work">
+                <input type="text" name="year" placeholder="Year">
+                <input type="text" name="medium" placeholder="Medium">
+                <input type="text" name="dimensions" placeholder="Dimensions">
+                <input type="text" name="location" placeholder="Location">
+                <button type="submit" class="publish-btn">Update</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/edit-modal.js' %}"></script>
 </body>
 </html>
